@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">test</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="bt">Bluetooth Test</string>
+    <string name="str_confirm">OK?</string>
+	<string name="str_open_bt">打开蓝牙</string>
+	<string name="str_close_bt">关闭蓝牙</string>
+	<string name="bt_name">蓝牙设备名</string>
+	<string name="bt_addr">蓝牙设备地址</string>
+	<string name="start_search">搜索设备</string>
+	<string name="searching">搜索中...</string>
+	<string name="remote_device_list">设备列表</string>
+	<string name="no_device">null</string>
+	<string name="connecting">connecting</string>
+	<string name="unconnected">unconnected</string>
+	<string name="rssi_null">N/A</string>
+	<string name="rssi_unit"> dBm</string>
+</resources>

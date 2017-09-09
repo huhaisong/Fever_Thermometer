@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="报警开关： 智能报警" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="报警体温上下限： 37.4   35.8" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="报警铃声音量：" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_launcher" />
+
+        <SeekBar
+            android:id="@+id/volume_seekBar"
+            android:layout_width="100dp"
+            android:layout_height="3dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@color/blue"
+            android:clickable="true"
+            android:focusable="true"
+            android:max="100"
+            android:progress="10" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_launcher" />
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="远程监控功能：" />
+
+        <Switch
+            android:id="@+id/switch_listen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="温度单位： " />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="℃"
+            android:textSize="16dp" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="设备固件版本检测" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="设备软件版本检测" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+    <LinearLayout
+        style="@style/mid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/usertext"
+            android:text="关于" />
+
+    </LinearLayout>
+
+    <View style="@style/bg_line"></View>
+
+
+</LinearLayout>

@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"  
+    android:background="@color/dark" 
+    
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <TextView
+        android:id="@+id/textview_debug"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_addr"   
+        android:textColor="@color/white"
+        />
+    <TextView
+        android:id="@+id/textview_bt_local_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_name"
+        android:textColor="@color/white"
+        />
+
+     
+    <Button 
+        android:id="@+id/button_open_bt"
+        android:text="@string/str_open_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"     
+        android:textColor="@color/white"           
+        />
+    
+    <Button
+        android:id="@+id/button_start_search"
+        android:text="@string/start_search"
+        android:layout_width="fill_parent"
+        android:layout_height = "wrap_content"
+        android:textColor="@color/white"
+        />
+
+    <ListView
+        android:id="@+id/search_device_list"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" >
+    </ListView>
+    
+</LinearLayout>

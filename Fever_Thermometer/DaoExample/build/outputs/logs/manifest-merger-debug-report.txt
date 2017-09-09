@@ -1,0 +1,88 @@
+-- Merging decision tree log ---
+manifest
+ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:2:1-21:12
+	package
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:3:5-46
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+application
+ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:5:5-19:19
+MERGED from [com.android.support:appcompat-v7:25.3.1] C:\Users\User\.android\build-cache\a7005c8696215ce5c51814e24478bf36f392313a\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\User\.android\build-cache\ce7c9489721cf7af6ab20e237a3032a14558ec87\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\User\.android\build-cache\334d7798aa16fae20b76cd0dab6ee0fd0fe8f7f4\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\User\.android\build-cache\7459354ce7a7042085c7b59cdca65d962591b4be\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\User\.android\build-cache\03a0e4f3bf1b0ca90bbd16f24c18e76d567993e3\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\User\.android\build-cache\0c7cc2b62f0da2ba98b5187d8e42ad3a00e05812\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\User\.android\build-cache\fe493dae3f9f998bdf4eb9a1a9332d826f26d977\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\User\.android\build-cache\aac48fd5c14c5be42fc1e23810f45dc1b9c73dcc\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\User\.android\build-cache\7de4ff8daf244160f6a9a158f62947d7e323ac04\output\AndroidManifest.xml:29:5-20
+	android:label
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:9:9-41
+	android:supportsRtl
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:10:9-35
+	android:allowBackup
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:7:9-35
+	android:icon
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:8:9-43
+	android:theme
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:11:9-40
+	android:name
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:6:9-28
+activity#org.greenrobot.greendao.example.NoteActivity
+ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:12:9-18:20
+	android:name
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:12:19-47
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:13:13-17:29
+action#android.intent.action.MAIN
+ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:14:17-69
+	android:name
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:14:25-66
+category#android.intent.category.LAUNCHER
+ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:16:17-77
+	android:name
+		ADDED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml:16:27-74
+uses-sdk
+INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [net.zetetic:android-database-sqlcipher:3.5.6] C:\Users\User\.android\build-cache\1493dc41cb5c31be13471b70de0f4be2b5772fa7\output\AndroidManifest.xml:3:3-40
+MERGED from [com.android.support:appcompat-v7:25.3.1] C:\Users\User\.android\build-cache\a7005c8696215ce5c51814e24478bf36f392313a\output\AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\User\.android\build-cache\ce7c9489721cf7af6ab20e237a3032a14558ec87\output\AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\User\.android\build-cache\334d7798aa16fae20b76cd0dab6ee0fd0fe8f7f4\output\AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\User\.android\build-cache\7459354ce7a7042085c7b59cdca65d962591b4be\output\AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\User\.android\build-cache\03a0e4f3bf1b0ca90bbd16f24c18e76d567993e3\output\AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\User\.android\build-cache\0c7cc2b62f0da2ba98b5187d8e42ad3a00e05812\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\User\.android\build-cache\fe493dae3f9f998bdf4eb9a1a9332d826f26d977\output\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:recyclerview-v7:25.3.1] C:\Users\User\.android\build-cache\3e3cda086bad549f92fb85ed6045cf0667bfbe3b\output\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\User\.android\build-cache\aac48fd5c14c5be42fc1e23810f45dc1b9c73dcc\output\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\User\.android\build-cache\7de4ff8daf244160f6a9a158f62947d7e323ac04\output\AndroidManifest.xml:21:5-23:58
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\User\.android\build-cache\a7005c8696215ce5c51814e24478bf36f392313a\output\AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+		INJECTED from E:\sanyecao\Fever_Thermometer\Fever_Thermometer\DaoExample\src\main\AndroidManifest.xml
+meta-data#android.support.VERSION
+ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\User\.android\build-cache\a7005c8696215ce5c51814e24478bf36f392313a\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\User\.android\build-cache\ce7c9489721cf7af6ab20e237a3032a14558ec87\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\User\.android\build-cache\334d7798aa16fae20b76cd0dab6ee0fd0fe8f7f4\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\User\.android\build-cache\7459354ce7a7042085c7b59cdca65d962591b4be\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\User\.android\build-cache\03a0e4f3bf1b0ca90bbd16f24c18e76d567993e3\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\User\.android\build-cache\0c7cc2b62f0da2ba98b5187d8e42ad3a00e05812\output\AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\User\.android\build-cache\fe493dae3f9f998bdf4eb9a1a9332d826f26d977\output\AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:recyclerview-v7:25.3.1] C:\Users\User\.android\build-cache\3e3cda086bad549f92fb85ed6045cf0667bfbe3b\output\AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\User\.android\build-cache\aac48fd5c14c5be42fc1e23810f45dc1b9c73dcc\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\User\.android\build-cache\7de4ff8daf244160f6a9a158f62947d7e323ac04\output\AndroidManifest.xml:25:5-27:34
+	android:value
+		ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\User\.android\build-cache\a7005c8696215ce5c51814e24478bf36f392313a\output\AndroidManifest.xml:27:9-31
+	android:name
+		ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\User\.android\build-cache\a7005c8696215ce5c51814e24478bf36f392313a\output\AndroidManifest.xml:26:9-47

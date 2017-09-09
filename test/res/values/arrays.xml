@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string-array name="bt_state_item">
+        
+        <item >unconnected</item>
+        <item>connecting</item>
+        <item>connected</item>
+        <item>error</item>
+    </string-array>
+</resources>

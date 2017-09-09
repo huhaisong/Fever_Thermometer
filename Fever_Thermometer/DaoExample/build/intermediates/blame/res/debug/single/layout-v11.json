@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "E:\\sanyecao\\Fever_Thermometer\\Fever_Thermometer\\DaoExample\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media.xml",
+        "source": "C:\\Users\\User\\.android\\build-cache\\a7005c8696215ce5c51814e24478bf36f392313a\\output\\res\\layout-v11\\notification_template_big_media.xml"
+    },
+    {
+        "merged": "E:\\sanyecao\\Fever_Thermometer\\Fever_Thermometer\\DaoExample\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media_narrow.xml",
+        "source": "C:\\Users\\User\\.android\\build-cache\\a7005c8696215ce5c51814e24478bf36f392313a\\output\\res\\layout-v11\\notification_template_big_media_narrow.xml"
+    },
+    {
+        "merged": "E:\\sanyecao\\Fever_Thermometer\\Fever_Thermometer\\DaoExample\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media_custom.xml",
+        "source": "C:\\Users\\User\\.android\\build-cache\\a7005c8696215ce5c51814e24478bf36f392313a\\output\\res\\layout-v11\\notification_template_big_media_custom.xml"
+    },
+    {
+        "merged": "E:\\sanyecao\\Fever_Thermometer\\Fever_Thermometer\\DaoExample\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media_narrow_custom.xml",
+        "source": "C:\\Users\\User\\.android\\build-cache\\a7005c8696215ce5c51814e24478bf36f392313a\\output\\res\\layout-v11\\notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "E:\\sanyecao\\Fever_Thermometer\\Fever_Thermometer\\DaoExample\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_media_action.xml",
+        "source": "C:\\Users\\User\\.android\\build-cache\\a7005c8696215ce5c51814e24478bf36f392313a\\output\\res\\layout-v11\\notification_media_action.xml"
+    },
+    {
+        "merged": "E:\\sanyecao\\Fever_Thermometer\\Fever_Thermometer\\DaoExample\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_media_cancel_action.xml",
+        "source": "C:\\Users\\User\\.android\\build-cache\\a7005c8696215ce5c51814e24478bf36f392313a\\output\\res\\layout-v11\\notification_media_cancel_action.xml"
+    }
+]

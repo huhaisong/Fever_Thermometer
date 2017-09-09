@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <EditText
+        android:id="@+id/et_other_medicine"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_margin="10dp"
+        android:gravity="start"
+        android:singleLine="false"
+        android:background="@drawable/bg_edit_normal"
+        android:hint="此处键入药物"
+        android:inputType="textMultiLine" />
+</LinearLayout>
