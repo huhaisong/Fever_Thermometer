@@ -36,14 +36,4 @@
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_set_alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/blue"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="设置下次服药提醒"
-        android:textSize="24sp" />
 </LinearLayout>

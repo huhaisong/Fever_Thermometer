@@ -20,7 +20,7 @@ public class FeverThermometerApplication extends Application {
     public void onCreate() {
         super.onCreate();
         this.mInstance = this;
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "fever_thermometer-db_test");
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "fever_thermometer-db_test1");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
     }

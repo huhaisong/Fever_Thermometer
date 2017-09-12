@@ -342,6 +342,23 @@ public class TimeUtils {
         return time;
     }
 
+    public static String getTimeString(String date, int hour, int minute) {
+        String time = date + " ";
+        if (hour < 10) {
+            time = time + "0" + hour + ":";
+        } else {
+            time = time + hour + ":";
+        }
+        if (minute < 10) {
+            time = time + "0" + minute + ":00";
+        } else {
+            time = time + minute + ":00";
+        }
+
+
+        return time;
+    }
+
     /**
      * 获取当前时间
      * <p>格式为用户自定义</p>

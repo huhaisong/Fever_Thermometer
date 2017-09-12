@@ -30,7 +30,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.base.LoadActivity" android:screenOrientation="portrait">
+        <activity
+            android:name=".ui.base.LoadActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,10 +40,20 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.medicine.MedicineActivity"    android:screenOrientation="portrait"/>
-        <activity android:name=".ui.base.MainActivity"    android:screenOrientation="portrait"/>
-        <activity android:name=".ui.medicine.MedicineAlarmActivity"    android:screenOrientation="portrait"/>
-        <activity android:name=".ui.medicine.MedicineItemActivity"   android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.medicine_recode.MedicineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.base.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.alarm.AlarmActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.medicine_recode.MedicineItemActivity"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".service.BluetoothService" />
     </application>
 
 </manifest>

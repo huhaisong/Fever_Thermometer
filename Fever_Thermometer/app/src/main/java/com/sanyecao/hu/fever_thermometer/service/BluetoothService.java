@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -22,13 +24,21 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import java.util.HashSet;
+import com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.MachineBean;
+
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+
+import static com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController.getmInstance;
+import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_UPDATE_BATTERY_LEVEL;
+import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_UPDATE_CONNECTED_STATE;
+import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_UPDATE_TEMPERATURE;
 
 /**
  * Created by huhaisong on 2017/8/31 9:59.
+ * 蓝牙温度计设备service
  */
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BluetoothService extends Service {
@@ -55,73 +65,49 @@ public class BluetoothService extends Service {
             .fromString("00002A21-0000-1000-8000-00805f9b34fb");
 
     private final int HIDE_MSB_8BITS_OUT_OF_32BITS = 0x00FFFFFF;
-    private final int HIDE_MSB_8BITS_OUT_OF_16BITS = 0x00FF;
-    private final int SHIFT_LEFT_8BITS = 8;
-    private final int SHIFT_LEFT_16BITS = 16;
-    private final int GET_BIT24 = 0x00400000;
+
     private static final int FIRST_BIT_MASK = 0x01;
 
-    private Set<BluetoothDevice> newDevices = new HashSet<>();
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothManager mBluetoothManager;
-    private BluetoothDevice mBluetoothDevice;
-    private Handler mBleHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-    };
-    private OnDataAvailableListener mOnDataAvailableListener;
-    private Context mContext;
-
+    private int mMachineId;
+    private Handler mHandler;
+    private MachineBean mMachineBean;
     private BluetoothGatt mBluetoothGatt;
+
     public BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
-        public BluetoothGattCharacteristic mHTIntervalCharacter;
-        public BluetoothGattCharacteristic mBatteryCharacteritsic;
-        public boolean isBatteryServiceFound = false;
-        public boolean isHTServiceFound = false;
+        private final int HIDE_MSB_8BITS_OUT_OF_16BITS = 0x00FF;
+        private final int SHIFT_LEFT_8BITS = 8;
+        private final int SHIFT_LEFT_16BITS = 16;
+        private final int GET_BIT24 = 0x00400000;
+        private BluetoothGattCharacteristic mHTIntervalCharacter;
+        private BluetoothGattCharacteristic mHTCharacteristic;
+        private BluetoothGattCharacteristic mBatteryCharacteristic;
+        private boolean isBatteryServiceFound = false;
+        private boolean isHTServiceFound = false;
         private BluetoothGattService mHTService, mBatteryService;
 
-        /**
-         * Callback indicating when GATT client has connected/disconnected
-         * to/from a remote GATT server.
-         *
-         * @param gatt
-         *            GATT client
-         * @param status
-         *            Status of the connect or disconnect operation.
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the operation
-         *            succeeds.
-         * @param newState
-         *            Returns the new connection state. Can be one of
-         *            {@link BluetoothProfile#STATE_DISCONNECTED} or
-         *            {@link BluetoothProfile#STATE_CONNECTED}
-         */
-        public void onConnectionStateChange(BluetoothGatt gatt, int status,
-                                            int newState) {
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            super.onConnectionStateChange(gatt, status, newState);
+            if (gatt != mBluetoothGatt)
+                return;
+            Log.e(TAG, "onConnectionStateChange: status = " + status + ",newState = " + newState);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                // deviceListAdapter.notifyDataSetChanged();
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    mHandler.sendEmptyMessage(MESSAGE_UPDATE_CONNECTED_STATE);
                     gatt.discoverServices();
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    connect(mMachineBean.getAddress());
                 }
+            } else if (status == 133) {
+                connect(mMachineBean.getAddress());
             }
         }
 
-        /**
-         * Callback invoked when the list of remote services, characteristics
-         * and descriptors for the remote device have been updated, ie new
-         * services have been discovered.
-         *
-         * @param gatt
-         *            GATT client invoked {@link BluetoothGatt#discoverServices}
-         * @param status
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the remote device
-         *            has been explored successfully.
-         */
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (gatt != mBluetoothGatt)
+                return;
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 List<BluetoothGattService> services = gatt.getServices();
-
                 for (BluetoothGattService service : services) {
                     if (service.getUuid().equals(HT_SERVICE_UUID)) {
                         isHTServiceFound = true;
@@ -143,14 +129,17 @@ public class BluetoothService extends Service {
         }
 
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (characteristic.getUuid().equals(
                         BATTERY_LEVEL_CHARACTERISTIC)) {
                     int batteryValue = characteristic.getValue()[0];
-                    Log.d(TAG, "Battery: " + batteryValue);
+                    Message message = Message.obtain();
+                    message.arg1 = batteryValue;
+                    message.what = MESSAGE_UPDATE_BATTERY_LEVEL;
+                    mHandler.sendMessage(message);
                     if (isHTServiceFound) {
+                        enableHTIndication();
                         ChangeHTP_Interval();
                     }
                 }
@@ -159,14 +148,18 @@ public class BluetoothService extends Service {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            double tempValue = 0.0;
-            if ((characteristic.getUuid()
-                    .equals(HT_IMEDIATE_MEASUREMENT_CHARACTERISTIC_UUID))
-                    || (characteristic.getUuid()
-                    .equals(HT_MEASUREMENT_CHARACTERISTIC_UUID))) {
+            double tempValue;
+            if ((characteristic.getUuid().equals(HT_IMEDIATE_MEASUREMENT_CHARACTERISTIC_UUID))
+                    || (characteristic.getUuid().equals(HT_MEASUREMENT_CHARACTERISTIC_UUID))) {
                 try {
                     //获得的温度
                     tempValue = decodeTemperature(characteristic.getValue());
+                    Message message = Message.obtain();
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble("temperature", tempValue);
+                    message.setData(bundle);
+                    message.what = MESSAGE_UPDATE_TEMPERATURE;
+                    mHandler.sendMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -181,7 +174,7 @@ public class BluetoothService extends Service {
          * represent the temperature value in IEEE-11073 32-bit Float format
          */
         private double decodeTemperature(byte[] data) throws Exception {
-            double temperatureValue = 0.0;
+            double temperatureValue;
             byte flag = data[0];
             byte exponential = data[4]; // 0xfe,即-2
             short firstOctet = convertNegativeByteToPositiveShort(data[1]);
@@ -217,10 +210,10 @@ public class BluetoothService extends Service {
         }
 
         private void readBatteryLevel() {
-            mBatteryCharacteritsic = mBatteryService
+            mBatteryCharacteristic = mBatteryService
                     .getCharacteristic(BATTERY_LEVEL_CHARACTERISTIC);
-            if (mBatteryCharacteritsic != null) {
-                mBluetoothGatt.readCharacteristic(mBatteryCharacteritsic);
+            if (mBatteryCharacteristic != null) {
+                mBluetoothGatt.readCharacteristic(mBatteryCharacteristic);
             }
         }
 
@@ -232,24 +225,21 @@ public class BluetoothService extends Service {
             mBluetoothGatt.writeCharacteristic(mHTIntervalCharacter);
         }
 
+        private void enableHTIndication() {
+            Log.e(TAG, "enableHTIndication()");
+            mHTCharacteristic = mHTService.getCharacteristic(HT_MEASUREMENT_CHARACTERISTIC_UUID);
+            mBluetoothGatt.setCharacteristicNotification(mHTCharacteristic, true);
+            BluetoothGattDescriptor descriptor = mHTCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG_DESCRIPTOR_UUID);
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE/* ENABLE_NOTIFICATION_VALUE */);// ENABLE_INDICATION_VALUE);
+            mBluetoothGatt.writeDescriptor(descriptor);
+        }
     };
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Log.e(TAG, "onBind: ");
         return myBinder;
-    }
-
-    public interface OnDataAvailableListener {
-        void onCharacteristicRead(BluetoothGatt gatt,
-                                  BluetoothGattCharacteristic characteristic, int status);
-
-        void onCharacteristicWrite(BluetoothGatt gatt,
-                                   BluetoothGattCharacteristic characteristic);
-    }
-
-    public void setOnDataAvailableListener(OnDataAvailableListener l) {
-        mOnDataAvailableListener = l;
     }
 
     public boolean initialize() {
@@ -261,7 +251,7 @@ public class BluetoothService extends Service {
     //如果设备支持BLE，那么就可以获取蓝牙适配器。
     private BluetoothAdapter getAdapter() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
             mBluetoothAdapter = mBluetoothManager.getAdapter();
         } else {
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -269,39 +259,15 @@ public class BluetoothService extends Service {
         return mBluetoothAdapter;
     }
 
-    private class MyBluetoothBroadcastReceive extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {//蓝牙状态改变
-                if (mBluetoothAdapter.isEnabled())
-                    startScan();
-            } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {//绑定不同设备状态改变
-            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {//搜索到设备
-                Log.i("ACTION_FOUND", "----------");
-                newDevices.add(device);
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(intent.getAction())) {//搜索状态改变
-            }
-        }
-    }
-
-    private MyBluetoothBroadcastReceive myBluetoothBroadcastReceive = new MyBluetoothBroadcastReceive();
     private BleBinder myBinder;
 
     @Override
     public void onCreate() {
+        Log.e(TAG, "onCreate: ");
         super.onCreate();
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(myBluetoothBroadcastReceive, filter);
         initialize();
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(myBroadcastReceiver, filter);
         myBinder = new BleBinder();
     }
 
@@ -318,17 +284,19 @@ public class BluetoothService extends Service {
     }
 
     //关闭蓝牙
-    public void disableBluetooth() {
+    /*public void disableBluetooth() {
         if (mBluetoothAdapter.isEnabled())
             mBluetoothAdapter.disable();
-    }
+    }*/
 
     //扫描蓝牙
     public void startScan() {
+        Log.e(TAG, "startScan: ");
+        closeBluetooth();
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
         }
-        mBluetoothAdapter.startDiscovery();
+        mBluetoothAdapter.startLeScan(leScanHook);
     }
 
     //停止扫描........
@@ -336,6 +304,7 @@ public class BluetoothService extends Service {
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
         }
+        mBluetoothAdapter.stopLeScan(leScanHook);
     }
 
     //关闭设备
@@ -343,6 +312,7 @@ public class BluetoothService extends Service {
         if (mBluetoothGatt == null) {
             return;
         }
+        mBluetoothGatt.disconnect();
         mBluetoothGatt.close();
         mBluetoothGatt = null;
     }
@@ -350,32 +320,89 @@ public class BluetoothService extends Service {
     //链接外设蓝牙
     public boolean connect(final String address) {
         stopScan();
+        closeBluetooth();
         if (mBluetoothAdapter == null || address == null) {
             return false;
         }
-
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         if (device == null) {
             return false;
         }
-        mBluetoothGatt = device.connectGatt(mContext, false, mGattCallback);
+        mBluetoothGatt = device.connectGatt(getBaseContext(), false, mGattCallback);
         return true;
     }
 
-    public void disConnect() {
-        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            return;
-        }
-        mBluetoothGatt.disconnect();
-    }
-
     public class BleBinder extends Binder {
-        public void connectMachine(int machineId) {
+        public void connectMachine(Handler handler, int machineId) {
+            Log.e(TAG, "connectMachine: machineId = " + machineId);
+            mHandler = handler;
+            mMachineId = machineId;
+            mMachineBean = getmInstance().queryMachineById(mMachineId);
+            if (mMachineBean == null) {
+                mMachineBean = new MachineBean();
+                mMachineBean.setMachineId(mMachineId);
+                getmInstance().addMachine(mMachineBean);
+            }
             if (mBluetoothAdapter.isEnabled()) {
                 startScan();
             } else {
                 enableBluetooth();
             }
         }
+
+        public void closeBluetoothService() {
+            closeBluetooth();
+        }
+
+        public void stopServiceScan() {
+            stopScan();
+        }
     }
+
+    public BluetoothAdapter.LeScanCallback leScanHook = new BluetoothAdapter.LeScanCallback() {
+
+        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+            Log.e(TAG, "Found:" + device.getName() + " " + rssi + " " + Arrays.toString(scanRecord));
+            MachineBean machineBean = DatabaseController.getmInstance().queryMachineByAdress(device.getAddress());
+            if (machineBean != null) {
+                Log.e(TAG, "onLeScan: machineBean != null and machineBean = " + machineBean.toString());
+                if (machineBean.getMachineId() != mMachineBean.getMachineId()) {
+                    Log.e(TAG, "onLeScan: the address " + machineBean.getAddress() + "in other machine");
+                    return;
+                }
+            }
+
+            if (device.getName().equals("CLVTK"))
+                if (mMachineBean.getAddress() == null || mMachineBean.getAddress().equals("")) {
+                    Log.e(TAG, "onLeScan: connecting address:" + mMachineBean.getAddress());
+                    mMachineBean.setAddress(device.getAddress());
+                    DatabaseController.getmInstance().updateMachine(mMachineBean);
+                    connect(mMachineBean.getAddress());
+                    Log.e(TAG, "onLeScan: now the machineBean = " + mMachineBean.toString());
+                }
+        }
+    };
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.e(TAG, "onUnbind: ");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy: ");
+        super.onDestroy();
+        closeBluetooth();
+        unregisterReceiver(myBroadcastReceiver);
+    }
+
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_ON) {
+                startScan();
+            }
+        }
+    };
 }

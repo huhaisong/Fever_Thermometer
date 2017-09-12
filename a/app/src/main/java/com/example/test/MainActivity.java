@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,7 +37,6 @@ import java.util.UUID;
 public class MainActivity extends Activity {
 
     public int is_bt_opened = 0;
-    final String BT_TAG = "[BLE]";
 
     public final static UUID HR_SERVICE_UUID = UUID
             .fromString("0000180D-0000-1000-8000-00805f9b34fb");
@@ -101,13 +99,14 @@ public class MainActivity extends Activity {
     public DeviceListAdapter deviceListAdapter;
     public BluetoothAdapter bt_local_dev;
 
-    private Handler handler; // callbac∏¯÷˜œﬂ≥Ã∑¢œ˚œ¢
+    private Handler handler; // callbacÁªô‰∏ªÁ∫øÁ®ãÂèëÊ∂àÊÅØ
 
     public BroadcastReceiver acl_connected_hook = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(BT_TAG, "acl_connected\n");
+            Log.e(TAG, "onReceive: 1" );
+            Log.e(TAG, "acl_connected\n");
         }
     };
     public BroadcastReceiver acl_pair_request_hook = new BroadcastReceiver() {
@@ -115,7 +114,8 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             int mType;
-            Log.e(BT_TAG, "smp pairing\n");
+            Log.e(TAG, "onReceive: 2" );
+            Log.e(TAG, "smp pairing\n");
             mType = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT, BluetoothDevice.ERROR);
         }
     };
@@ -128,25 +128,25 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.arg1 == 2) {
-                Log.d(BT_TAG, "Message\n\n\n");
+                Log.e(TAG, "Message\n\n\n");
                 deviceListAdapter.notifyDataSetChanged();
             }
-            // textView.setText("Œ“ «÷˜œﬂ≥ÃµƒHandler£¨ ’µΩ¡Àœ˚œ¢£∫"+(String)msg.obj);
+            // textView.setText("ÊàëÊòØ‰∏ªÁ∫øÁ®ãÁöÑHandlerÔºåÊî∂Âà∞‰∫ÜÊ∂àÊÅØÔºö"+(String)msg.obj);
         }
     }
 
     public void MySendMessage(int message) {
 
         // deviceListAdapter.notifyDataSetChanged();
-        Looper looper = Looper.getMainLooper(); // ÷˜œﬂ≥ÃµƒLooper∂‘œÛ
-        // //’‚¿Ô“‘÷˜œﬂ≥ÃµƒLooper∂‘œÛ¥¥Ω®¡Àhandler£¨
-        // //À˘“‘£¨’‚∏ˆhandler∑¢ÀÕµƒMessageª·±ª¥´µ›∏¯÷˜œﬂ≥ÃµƒMessageQueue°£
+        Looper looper = Looper.getMainLooper(); // ‰∏ªÁ∫øÁ®ãÁöÑLooperÂØπË±°
+        // //ËøôÈáå‰ª•‰∏ªÁ∫øÁ®ãÁöÑLooperÂØπË±°ÂàõÂª∫‰∫ÜhandlerÔºå
+        // //ÊâÄ‰ª•ÔºåËøô‰∏™handlerÂèëÈÄÅÁöÑMessage‰ºöË¢´‰º†ÈÄíÁªô‰∏ªÁ∫øÁ®ãÁöÑMessageQueue„ÄÇ
         handler = new MyHandler(looper);
-        // ππΩ®Message∂‘œÛ
-        // µ⁄“ª∏ˆ≤Œ ˝£∫ «◊‘º∫÷∏∂®µƒmessage¥˙∫≈£¨∑Ω±„‘⁄handler—°‘Ò–‘µÿΩ” ’
-        // µ⁄∂˛»˝∏ˆ≤Œ ˝√ª”– ≤√¥“‚“Â //µ⁄Àƒ∏ˆ≤Œ ˝–Ë“™∑‚◊∞µƒ∂‘œÛ
+        // ÊûÑÂª∫MessageÂØπË±°
+        // Á¨¨‰∏Ä‰∏™ÂèÇÊï∞ÔºöÊòØËá™Â∑±ÊåáÂÆöÁöÑmessage‰ª£Âè∑ÔºåÊñπ‰æøÂú®handlerÈÄâÊã©ÊÄßÂú∞Êé•Êî∂
+        // Á¨¨‰∫å‰∏â‰∏™ÂèÇÊï∞Ê≤°Êúâ‰ªÄ‰πàÊÑè‰πâ //Á¨¨Âõõ‰∏™ÂèÇÊï∞ÈúÄË¶ÅÂ∞ÅË£ÖÁöÑÂØπË±°
         Message msg = handler.obtainMessage(message, 2, 2, null);
-        handler.sendMessage(msg); // ∑¢ÀÕœ˚œ¢
+        handler.sendMessage(msg); // ÂèëÈÄÅÊ∂àÊÅØ
     }
 
     // need to check whether the new_bt is new device, and add to list if new
@@ -156,12 +156,12 @@ public class MainActivity extends Activity {
         for (i = 0; i < bt_list.size(); i++) {
             // if (bt_list.get(i).device.getAddress() == new_bt.getAddress())
             if (bt_list.get(i).device.getAddress().equals(new_bt.getAddress())) {
-                // Log.d(BT_TAG, "repeat");
+                // Log.e(TAG, "repeat");
                 return bt_list.get(i);
             }
         }
         // deviceListAdapter.notifyDataSetChanged();
-        Log.d(BT_TAG, "foud" + new_bt.getName());
+        Log.e(TAG, "foud" + new_bt.getName());
         new_entry = new DeviceEntry(new_bt, 0);
         bt_list.add(new_entry);
 
@@ -173,6 +173,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e(TAG, "onReceive: 3" );
             BluetoothDevice remoteDevice = intent
                     .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             // inquiry_device_list.add(remoteDevice);
@@ -183,10 +184,10 @@ public class MainActivity extends Activity {
             DeviceListCheckAdd(deviceList, remoteDevice);
             deviceListAdapter.notifyDataSetChanged();
 
-            Log.d(BT_TAG, "found:" + remoteDevice.getName());
+            Log.e(TAG, "found:" + remoteDevice.getName());
             /*
-			 * if (remoteDevice.createBond() == true) { Log.d(BT_TAG,
-			 * "start bonding\n"); } else { Log.d(BT_TAG, "fail to bond\n"); }
+             * if (remoteDevice.createBond() == true) { Log.e(TAG,
+			 * "start bonding\n"); } else { Log.e(TAG, "fail to bond\n"); }
 			 */
         }
 
@@ -216,17 +217,17 @@ public class MainActivity extends Activity {
                 case 0x01: // Flags
                     // parsedAd.flags = buffer.get();
                     length--;
-                    Log.d(BT_TAG, "Flags=" + buffer.get());
+                    Log.e(TAG, "Flags=" + buffer.get());
                     break;
                 case 0x02: // Partial list of 16-bit UUIDs
                 case 0x03: // Complete list of 16-bit UUIDs
                 case 0x14: // List of 16-bit Service Solicitation UUIDs
-                    Log.d(BT_TAG, "UUID " + type);
+                    Log.e(TAG, "UUID " + type);
                     while (length >= 2) {
                         // parsedAd.uuids.add(UUID.fromString(String.format(
                         // "%08x-0000-1000-8000-00805f9b34fb",
                         // buffer.getShort())));
-                        Log.d(BT_TAG, "uuids:" + buffer.getShort());
+                        Log.e(TAG, "uuids:" + buffer.getShort());
                         length -= 2;
                     }
                     break;
@@ -249,7 +250,7 @@ public class MainActivity extends Activity {
                         // long msb = buffer.getLong();
                         // parsedAd.uuids.add(new UUID(msb, lsb));
 
-                        Log.d(BT_TAG, "UUID:" + buffer.getLong() + buffer.getLong());
+                        Log.e(TAG, "UUID:" + buffer.getLong() + buffer.getLong());
                         length -= 16;
                     }
                     break;
@@ -261,17 +262,17 @@ public class MainActivity extends Activity {
                     length = 0;
                     // parsedAd.localName = new String(sb).trim();
                     Localname = new String(sb).trim();
-                    Log.d(BT_TAG, "LocalName=" + Localname);
+                    Log.e(TAG, "LocalName=" + Localname);
                     break;
                 case (byte) 0xcf: // Manufacturer Specific Data
                     // parsedAd.manufacturer = buffer.getShort();
-                    Log.d(BT_TAG, "CV=");
+                    Log.e(TAG, "CV=");
                     while (length >= 1) {
                         // parsedAd.uuids
                         // .add(UUID.fromString(String.format(
                         // "%08x-0000-1000-8000-00805f9b34fb",
                         // buffer.getInt())));
-                        Log.d(BT_TAG, " " + buffer.get());
+                        Log.e(TAG, " " + buffer.get());
                         length -= 1;
                     }
                     break;
@@ -301,8 +302,7 @@ public class MainActivity extends Activity {
          */
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             DeviceEntry new_entry;
-            Log.d(BT_TAG, "Found" + device.getName() + " " + rssi + " "
-                    + scanRecord);
+            Log.e(TAG, "Found" + device.getName() + " " + rssi + " " + scanRecord);
             parseData(scanRecord);
             new_entry = DeviceListCheckAdd(deviceList, device);
             if (new_entry != null) {
@@ -314,31 +314,17 @@ public class MainActivity extends Activity {
     };
 
     public BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        /**
-         * Callback indicating when GATT client has connected/disconnected
-         * to/from a remote GATT server.
-         *
-         * @param gatt
-         *            GATT client
-         * @param status
-         *            Status of the connect or disconnect operation.
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the operation
-         *            succeeds.
-         * @param newState
-         *            Returns the new connection state. Can be one of
-         *            {@link BluetoothProfile#STATE_DISCONNECTED} or
-         *            {@link BluetoothProfile#STATE_CONNECTED}
-         */
-        public void onConnectionStateChange(BluetoothGatt gatt, int status,
-                                            int newState) {
+
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             DeviceEntry deviceItem = deviceListAdapter.getItemByGatt(gatt);
+            Log.e(TAG, "onConnectionStateChange: status ="+status+",newState = "+newState);
             if (deviceItem != null) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     deviceItem.state = newState;
                     // deviceListAdapter.notifyDataSetChanged();
                     MySendMessage(2);
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
-                        Log.d(BT_TAG, "new connect device\n");
+                        Log.e(TAG, "new connect device\n");
                         gatt.discoverServices();
                     }
                 }
@@ -346,20 +332,8 @@ public class MainActivity extends Activity {
 
         }
 
-        /**
-         * Callback invoked when the list of remote services, characteristics
-         * and descriptors for the remote device have been updated, ie new
-         * services have been discovered.
-         *
-         * @param gatt
-         *            GATT client invoked {@link BluetoothGatt#discoverServices}
-         * @param status
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the remote device
-         *            has been explored successfully.
-         */
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.d(BT_TAG, "services discovered\n");
-
+            Log.e(TAG, "services discovered\n");
             DeviceEntry deviceItem = deviceListAdapter.getItemByGatt(gatt);
             if (deviceItem != null) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -368,12 +342,12 @@ public class MainActivity extends Activity {
                         if (service.getUuid().equals(HT_SERVICE_UUID)) {
                             isHTServiceFound = true;
                             mHTService = service;
-                            Log.e(BT_TAG, "found hts\n");
+                            Log.e(TAG, "found hts\n");
                         }
                         if (service.getUuid().equals(BATTERY_SERVICE)) {
                             mBatteryService = service;
                             isBatteryServiceFound = true;
-                            Log.e(BT_TAG, "found bas\n");
+                            Log.e(TAG, "found bas\n");
                         }
                     }
                     if (isHTServiceFound) {
@@ -391,53 +365,57 @@ public class MainActivity extends Activity {
                     }
                 } else {
                     // mCallbacks.onError(ERROR_DISCOVERY_SERVICE, status);
+                    Log.e(TAG, "onServicesDiscovered: status != BluetoothGatt.GATT_SUCCESS");
                 }
+            } else {
+                Log.e(TAG, "onServicesDiscovered: deviceItem == null");
             }
         }
 
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic characteristic, int status) {
-            Log.d(BT_TAG, "cr");
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                if (characteristic.getUuid().equals(
-                        BATTERY_LEVEL_CHARACTERISTIC)) {
-                    int batteryValue = characteristic.getValue()[0];
-                    Log.d(BT_TAG, "Battery: " + batteryValue);
-                    // mCallbacks.onBatteryValueReceived(batteryValue);
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+            Log.e(TAG, "onCharacteristicWrite: " + status);
+        }
 
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            Log.e(TAG, "onCharacteristicRead: ");
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                if (characteristic.getUuid().equals(BATTERY_LEVEL_CHARACTERISTIC)) {
+                    int batteryValue = characteristic.getValue()[0];
+                    Log.e(TAG, "Battery: " + batteryValue);
+                    // mCallbacks.onBatteryValueReceived(batteryValue);
                     // enableBatteryNTF();
                     if (isHTServiceFound) {
-                        // enableHTIndication();
+                        enableHTIndication();
                         ChangeHTP_Interval();
                     }
                 }
             } else {
+
             }
         }
 
         @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt,
-                                            BluetoothGattCharacteristic characteristic) {
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            super.onCharacteristicChanged(gatt, characteristic);
             double tempValue = 0.0;
             DeviceEntry device;
-            Log.e(BT_TAG, "value changed\n");
-            if ((characteristic.getUuid()
-                    .equals(HT_IMEDIATE_MEASUREMENT_CHARACTERISTIC_UUID))
-                    || (characteristic.getUuid()
-                    .equals(HT_MEASUREMENT_CHARACTERISTIC_UUID))) {
+            Log.e(TAG, "onCharacteristicChanged: ");
+            if ((characteristic.getUuid().equals(HT_IMEDIATE_MEASUREMENT_CHARACTERISTIC_UUID))
+                    || (characteristic.getUuid().equals(HT_MEASUREMENT_CHARACTERISTIC_UUID))) {
                 try {
                     tempValue = decodeTemperature(characteristic.getValue());
-                    Log.e(BT_TAG, "Temp value: " + tempValue);
+                    Log.e(TAG, "Temp value: " + tempValue);
                     // mCallbacks.onHTValueReceived(tempValue);
                     device = deviceListAdapter.getItemByGatt(gatt);
-                    if ((device != null)
-                            && (Double.compare(device.temp_value, tempValue) != 0)) {
+                    if ((device != null) && (Double.compare(device.temp_value, tempValue) != 0)) {
                         device.temp_value = tempValue;
                         MySendMessage(2);
                     }
                 } catch (Exception e) {
-                    Log.e(BT_TAG, "invalid temperature value");
+                    Log.e(TAG, "invalid temperature value");
                 }
             }
         }
@@ -452,21 +430,21 @@ public class MainActivity extends Activity {
         private double decodeTemperature(byte[] data) throws Exception {
             double temperatureValue = 0.0;
             byte flag = data[0];
-            byte exponential = data[4]; // 0xfe,º¥-2
+            byte exponential = data[4]; // 0xfe,Âç≥-2
             short firstOctet = convertNegativeByteToPositiveShort(data[1]);
             short secondOctet = convertNegativeByteToPositiveShort(data[2]);
             short thirdOctet = convertNegativeByteToPositiveShort(data[3]);
             int mantissa = ((thirdOctet << SHIFT_LEFT_16BITS)
                     | (secondOctet << SHIFT_LEFT_8BITS) | (firstOctet))
                     & HIDE_MSB_8BITS_OUT_OF_32BITS;
-            Log.d(BT_TAG, "mantissa " + mantissa + "expo " + exponential);
+            Log.e(TAG, "mantissa " + mantissa + "expo " + exponential);
             mantissa = getTwosComplimentOfNegativeMantissa(mantissa);
-            Log.d(BT_TAG, "manstissa2 " + mantissa);
+            Log.e(TAG, "manstissa2 " + mantissa);
             // /temperatureValue = (mantissa * Math.pow(10, exponential));
             temperatureValue = mantissa / 100.0;
 
 			/*
-			 * Conversion of temperature unit from Fahrenheit to Celsius if unit
+             * Conversion of temperature unit from Fahrenheit to Celsius if unit
 			 * is in Fahrenheit Celsius = (98.6*Fahrenheit -32) 5/9
 			 */
             if ((flag & FIRST_BIT_MASK) != 0) {
@@ -492,95 +470,6 @@ public class MainActivity extends Activity {
             }
         }
 
-        /**
-         * Callback indicating the result of a characteristic write operation.
-         *
-         * <p>
-         * If this callback is invoked while a reliable write transaction is in
-         * progress, the value of the characteristic represents the value
-         * reported by the remote device. An application should compare this
-         * value to the desired value to be written. If the values don't match,
-         * the application must abort the reliable write transaction.
-         *
-         * @param gatt
-         *            GATT client invoked
-         *            {@link BluetoothGatt#writeCharacteristic}
-         * @param characteristic
-         *            Characteristic that was written to the associated remote
-         *            device.
-         * @param status
-         *            The result of the write operation
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the operation
-         *            succeeds.
-         */
-        public void onCharacteristicWrite(BluetoothGatt gatt,
-                                          BluetoothGattCharacteristic characteristic, int status) {
-        }
-
-        /**
-         * Callback reporting the result of a descriptor read operation.
-         *
-         * @param gatt
-         *            GATT client invoked {@link BluetoothGatt#readDescriptor}
-         * @param descriptor
-         *            Descriptor that was read from the associated remote
-         *            device.
-         * @param status
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the read operation
-         *            was completed successfully
-         */
-        public void onDescriptorRead(BluetoothGatt gatt,
-                                     BluetoothGattDescriptor descriptor, int status) {
-        }
-
-        /**
-         * Callback indicating the result of a descriptor write operation.
-         *
-         * @param gatt
-         *            GATT client invoked {@link BluetoothGatt#writeDescriptor}
-         * @param descriptor
-         *            Descriptor that was writte to the associated remote
-         *            device.
-         * @param status
-         *            The result of the write operation
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the operation
-         *            succeeds.
-         */
-        public void onDescriptorWrite(BluetoothGatt gatt,
-                                      BluetoothGattDescriptor descriptor, int status) {
-        }
-
-        /**
-         * Callback invoked when a reliable write transaction has been
-         * completed.
-         *
-         * @param gatt
-         *            GATT client invoked
-         *            {@link BluetoothGatt#executeReliableWrite}
-         * @param status
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the reliable write
-         *            transaction was executed successfully
-         */
-        public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
-        }
-
-        /**
-         * Callback reporting the RSSI for a remote device connection.
-         *
-         * This callback is triggered in response to the
-         * {@link BluetoothGatt#readRemoteRssi} function.
-         *
-         * @param gatt
-         *            GATT client invoked {@link BluetoothGatt#readRemoteRssi}
-         * @param rssi
-         *            The RSSI value for the remote device
-         * @param status
-         *            {@link BluetoothGatt#GATT_SUCCESS} if the RSSI was read
-         *            successfully
-         */
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-        }
-
         private void readBatteryLevel() {
             mBatteryCharacteritsic = mBatteryService
                     .getCharacteristic(BATTERY_LEVEL_CHARACTERISTIC);
@@ -590,30 +479,25 @@ public class MainActivity extends Activity {
         }
 
         private void enableHTIndication() {
-            Log.e(BT_TAG, "enableHTIndication()");
-            mHTCharacteristic = mHTService
-                    .getCharacteristic(HT_MEASUREMENT_CHARACTERISTIC_UUID);
-            mBluetoothGatt.setCharacteristicNotification(mHTCharacteristic,
-                    true);
-            BluetoothGattDescriptor descriptor = mHTCharacteristic
-                    .getDescriptor(CLIENT_CHARACTERISTIC_CONFIG_DESCRIPTOR_UUID);
-            descriptor
-                    .setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE/* ENABLE_NOTIFICATION_VALUE */);// ENABLE_INDICATION_VALUE);
+            Log.e(TAG, "enableHTIndication()");
+            mHTCharacteristic = mHTService.getCharacteristic(HT_MEASUREMENT_CHARACTERISTIC_UUID);
+            mBluetoothGatt.setCharacteristicNotification(mHTCharacteristic, true);
+            BluetoothGattDescriptor descriptor = mHTCharacteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG_DESCRIPTOR_UUID);
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE/* ENABLE_NOTIFICATION_VALUE */);// ENABLE_INDICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
         }
 
         private void ChangeHTP_Interval() {
-            Log.e(BT_TAG, "ChangeHTP_Interval()");
+            Log.e(TAG, "ChangeHTP_Interval()");
             final byte[] interval_val = {0x0a, 0x00};
-            mHTIntervalCharacter = mHTService
-                    .getCharacteristic(HT_MEASUREMENT_INTERVAL_CHARACTERISTIC_UUID);
+            mHTIntervalCharacter = mHTService.getCharacteristic(HT_MEASUREMENT_INTERVAL_CHARACTERISTIC_UUID);
             mHTIntervalCharacter.setValue(interval_val);
             mBluetoothGatt.writeCharacteristic(mHTIntervalCharacter);
         }
 
-        //  πƒ‹µÁ≥ÿµÁ¡øNotify
+        // ‰ΩøËÉΩÁîµÊ±†ÁîµÈáèNotify
         private void enableBatteryNTF() {
-            Log.e(BT_TAG, "enableBatteryNTF()");
+            Log.e(TAG, "enableBatteryNTF()");
             mBatteryCharacteritsic = mBatteryService
                     .getCharacteristic(BATTERY_LEVEL_CHARACTERISTIC);
             mBluetoothGatt.setCharacteristicNotification(
@@ -636,7 +520,7 @@ public class MainActivity extends Activity {
                 value[0] = 1;
                 descriptor.setValue(value);
                 isBatteryStateDescriptorWritten = true;
-                Log.e(BT_TAG, "writing battery state desciptor");
+                Log.e(TAG, "writing battery state desciptor");
                 mBluetoothGatt.writeDescriptor(descriptor);
             }
         }
@@ -661,7 +545,7 @@ public class MainActivity extends Activity {
     @Override
     public void finish() {
         super.finish();
-        Log.v(BT_TAG, "finish");
+        Log.v(TAG, "finish");
         bt_local_dev.stopLeScan(leScanHook);
         /** android NOT guarantee that onDestroy() follows finish() */
         // /releaseAll();
@@ -669,11 +553,14 @@ public class MainActivity extends Activity {
         unregisterReceiver(acl_connected_hook);
     }
 
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.e(TAG, "onCreate: ");
         inquiry_device_list = new ArrayList<BluetoothDevice>();
         device_name_list = new ArrayList<String>();
         deviceList = new ArrayList<DeviceEntry>();
@@ -684,17 +571,11 @@ public class MainActivity extends Activity {
         final TextView textview1 = (TextView) findViewById(R.id.textview_debug);
         final TextView bt_name_text_view = (TextView) findViewById(R.id.textview_bt_local_name);
         ListView myListView = (ListView) findViewById(R.id.search_device_list);
-        final ArrayAdapter<String> aa;
 
-        // aa = new ArrayAdapter<BluetoothDevice>(this,
-        // android.R.layout.simple_list_item_1, inquiry_device_list);
-        aa = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, device_name_list);
         deviceListAdapter = new DeviceListAdapter(this, deviceList);
 
         myListView.setOnItemClickListener(mOnItemClickListener);
 
-        // myListView.setAdapter(aa);
         myListView.setAdapter(deviceListAdapter);
 
         bt_local_dev = BluetoothAdapter.getDefaultAdapter();
@@ -722,12 +603,12 @@ public class MainActivity extends Activity {
                     button1.setText(R.string.str_close_bt);
                     bt_local_dev.enable();
                     is_bt_opened = 1;
-                    Log.d(BT_TAG, "open bt\n");
+                    Log.e(TAG, "open bt\n");
                 } else {
                     is_bt_opened = 0;
                     button1.setText(R.string.str_open_bt);
                     bt_local_dev.disable();
-                    Log.d(BT_TAG, "close bt\n");
+                    Log.e(TAG, "close bt\n");
                 }
 
             }
@@ -743,7 +624,7 @@ public class MainActivity extends Activity {
 
                     // bt_local_dev.startDiscovery();
                     bt_local_dev.startLeScan(leScanHook);
-                    Log.d(BT_TAG, "le scanning\n");
+                    Log.e(TAG, "le scanning\n");
                     deviceList.clear();
                     deviceListAdapter.notifyDataSetChanged();
                     // Intent intent = new Intent(MainActivity.this,
@@ -762,22 +643,20 @@ public class MainActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
-            Log.d(BT_TAG, "click" + position + id);
-            DeviceEntry device = (DeviceEntry) parent
-                    .getItemAtPosition(position);
+            Log.e(TAG, "click" + position + id);
+            DeviceEntry device = (DeviceEntry) parent.getItemAtPosition(position);
             if (device != null) {
                 switch (device.state) {
                     case BluetoothProfile.STATE_DISCONNECTED:
-                        Log.d(BT_TAG, "createBond " + device.device.getName());
-					/*
-					 * if (device.device.createBond() == true) { Log.d(BT_TAG,
+                        Log.e(TAG, "createBond " + device.device.getName());
+                    /*
+					 * if (device.device.createBond() == true) { Log.e(TAG,
 					 * "connecting\n"); device.state = 1;
 					 * deviceListAdapter.notifyDataSetChanged(); } else {
-					 * Log.d(BT_TAG, "connect fail\n"); }
+					 * Log.e(TAG, "connect fail\n"); }
 					 */
-                        device.gatt = device.device.connectGatt(
-                                getApplicationContext(), false, gattCallback);
                         bt_local_dev.stopLeScan(leScanHook);
+                        device.gatt = device.device.connectGatt(getApplicationContext(), false, gattCallback);
                         mBluetoothGatt = device.gatt;
                         break;
                     case BluetoothProfile.STATE_CONNECTING:
@@ -789,10 +668,6 @@ public class MainActivity extends Activity {
                         break;
                 }
             }
-            // DeviceEntry deviceEntry = (DeviceEntry)
-            // parent.getItemAtPosition(position);
-            // mSearchProgressBar.setVisibility(View.INVISIBLE);
-            // mBluzConnector.connect(deviceEntry.device);
         }
     };
 }

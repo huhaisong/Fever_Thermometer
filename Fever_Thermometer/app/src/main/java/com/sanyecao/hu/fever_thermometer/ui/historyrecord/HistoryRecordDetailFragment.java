@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.sanyecao.hu.fever_thermometer.R;
 import com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.BabyBean;
-import com.sanyecao.hu.fever_thermometer.ui.medicine.NameSpinnerAdapter;
+import com.sanyecao.hu.fever_thermometer.ui.medicine_recode.NameSpinnerAdapter;
 import com.sanyecao.hu.fever_thermometer.ui.view.FeverTemperatureGridView;
 import com.sanyecao.hu.fever_thermometer.utils.TimeUtils;
 

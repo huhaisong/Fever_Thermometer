@@ -8,6 +8,7 @@ import com.sanyecao.hu.fever_thermometer.mode.database.bean.BabyBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.CacheMedicineBean;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.CacheMedicineBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.DaoSession;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.MachineBean;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.MachineBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.MedicineRecodeBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.RecodeNoteBean;
@@ -124,7 +125,7 @@ public class DatabaseController {
     public List<TemperatureRecodeBean> queryTemperatureRecodeByBabyIdAndTimeOrderByTime
             (int babyId, String time) {
         Query<TemperatureRecodeBean> query = temperatureRecodeBeanDao.queryBuilder()
-                .where(TemperatureRecodeBeanDao.Properties.BabyId.eq( babyId ),
+                .where(TemperatureRecodeBeanDao.Properties.BabyId.eq(babyId),
                         TemperatureRecodeBeanDao.Properties.Time.like(time + "%"))
                 .orderAsc(TemperatureRecodeBeanDao.Properties.Time)
                 .build();
@@ -135,8 +136,30 @@ public class DatabaseController {
         temperatureRecodeBeanDao.insert(temperatureRecodeBean);
     }
 
-    public  List<RecodeNoteBean> queryAllRecodeNoteBean(){
-        Query<RecodeNoteBean> recodeNoteBeanQuery = recodeNoteBeanDao.queryBuilder() .build();
+    public List<RecodeNoteBean> queryAllRecodeNoteBean() {
+        Query<RecodeNoteBean> recodeNoteBeanQuery = recodeNoteBeanDao.queryBuilder().build();
         return recodeNoteBeanQuery.list();
+    }
+
+    public MachineBean queryMachineById(int machineId) {
+        MachineBean machineBean = machineBeanDao.queryBuilder().where(MachineBeanDao.Properties.Id.eq(machineId)).build().unique();
+        return machineBean;
+    }
+
+    public MachineBean queryMachineByAdress(String machineAddress) {
+        Query<MachineBean> machineBeanQuery = machineBeanDao.queryBuilder().where(MachineBeanDao.Properties.Address.eq(machineAddress)).build();
+        List<MachineBean> list = machineBeanQuery.list();
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public void addMachine(MachineBean machineBean) {
+        machineBeanDao.insert(machineBean);
+    }
+
+    public void updateMachine(MachineBean machineBean) {
+        machineBeanDao.update(machineBean);
     }
 }

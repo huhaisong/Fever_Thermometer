@@ -2,7 +2,6 @@ package com.sanyecao.hu.fever_thermometer.mode.database.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -16,11 +15,10 @@ public class MachineBean {
     private Long id;
     private int machineId;
 
-    @NotNull
     private String address;  //设备地址
 
-    @Generated(hash = 1279486337)
-    public MachineBean(Long id, int machineId, @NotNull String address) {
+    @Generated(hash = 1144255544)
+    public MachineBean(Long id, int machineId, String address) {
         this.id = id;
         this.machineId = machineId;
         this.address = address;
@@ -52,5 +50,14 @@ public class MachineBean {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "MachineBean{" +
+                "id=" + id +
+                ", machineId=" + machineId +
+                ", address='" + address + '\'' +
+                '}';
     }
 }

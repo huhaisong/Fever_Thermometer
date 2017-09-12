@@ -1,10 +1,13 @@
 package com.sanyecao.hu.fever_thermometer.ui.temperature;
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -19,10 +22,13 @@ import android.widget.LinearLayout;
 
 import com.sanyecao.hu.fever_thermometer.R;
 import com.sanyecao.hu.fever_thermometer.mode.logic.temperature.TemperatureController;
+import com.sanyecao.hu.fever_thermometer.service.BluetoothService;
 import com.sanyecao.hu.fever_thermometer.ui.base.MainActivity;
-import com.sanyecao.hu.fever_thermometer.ui.medicine.MedicineActivity;
+import com.sanyecao.hu.fever_thermometer.ui.view.MyViewPager;
 
 import java.util.ArrayList;
+
+import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * Created by huhaisong on 2017/8/15 13:44.
@@ -34,7 +40,7 @@ public class TemperatureFragment extends Fragment {
     private Context mContext;
     private ImageView[] dots;
     private LinearLayout dotViewLayout;
-    private ViewPager viewPager;
+    public MyViewPager viewPager;
     private TemperatureController temperatureController;
     private ArrayList<MachineFragment> machineFragments;
     private MyOnPagerChangeListener myOnPagerChangeListener;
@@ -55,7 +61,25 @@ public class TemperatureFragment extends Fragment {
         return rootView;
     }
 
+    public static BluetoothService.BleBinder myBinder;
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder = (BluetoothService.BleBinder) service;
+        }
+    };
+
     private void initData() {
+
+        Intent bindIntent = new Intent(getContext(), BluetoothService.class);
+        getActivity().bindService(bindIntent, connection, BIND_AUTO_CREATE);
+
         final GestureDetector mGestureDetector = new GestureDetector(getActivity(), new MyOnGestureListener());
         myOnTouchListener = new MainActivity.MyOnTouchListener() {
             @Override
@@ -69,18 +93,17 @@ public class TemperatureFragment extends Fragment {
         else
             machineFragments = new ArrayList<>();
         for (int i = 0; i < temperatureController.getMachineNum(); i++) {
-            MachineFragment machineFragment = new MachineFragment(i);
-            machineFragment.setMachineId(i);
+            MachineFragment machineFragment = new MachineFragment(i, TemperatureFragment.this);
             machineFragments.add(machineFragment);
         }
-
         myOnPagerChangeListener = new MyOnPagerChangeListener();
         temperatureAdapter = new TemperatureAdapter(getChildFragmentManager(), machineFragments);
     }
 
     private void initView(View view) {
         dotViewLayout = (LinearLayout) view.findViewById(R.id.viewGroup);
-        viewPager = (ViewPager) view.findViewById(R.id.temperature_viewpager);
+        viewPager = (MyViewPager) view.findViewById(R.id.temperature_viewpager);
+        viewPager.setScrollble(true);
         initDots();
         ((MainActivity) getActivity()).setMainToolBarTitle("temperature");
     }
@@ -214,9 +237,7 @@ public class TemperatureFragment extends Fragment {
             if (e1.getY() - e2.getY() > verticalMinDistanceY && Math.abs(velocityX) > minVelocity) {
                 //向上滑动
                 Log.e(TAG, "向上滑动 ");
-                Intent intent = new Intent(mContext, MedicineActivity.class);
-                intent.putExtra("babyName", (machineFragments.get(viewPager.getCurrentItem())).getBabyBean().getName());
-                startActivity(intent);
+
             } else if (e2.getY() - e1.getY() > verticalMinDistanceY && Math.abs(velocityX) > minVelocity) {
                 //向下滑动
                 Log.e(TAG, "向下滑动 ");
@@ -229,5 +250,13 @@ public class TemperatureFragment extends Fragment {
             }
             return false;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (myBinder != null)
+            myBinder.closeBluetoothService();
+        getActivity().unbindService(connection);
     }
 }

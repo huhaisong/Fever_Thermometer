@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 public class DeviceListAdapter extends BaseAdapter {
-	private List<DeviceEntry> mItems; // ½ö½öÊÇÖ¸Õë
+	private List<DeviceEntry> mItems; // ä»…ä»…æ˜¯æŒ‡é’ˆ
 	private LayoutInflater inflater;
 	private String[] stateStr;
 	private final static double INVALID_TEMP_VALUE = 1000;
@@ -27,14 +27,14 @@ public class DeviceListAdapter extends BaseAdapter {
 	}
 
 	public static class DeviceEntry {
-		public BluetoothDevice device; // Éè±¸
+		public BluetoothDevice device; // è®¾å¤‡
 		public BluetoothGatt gatt;
-		public int state; // Éè±¸×´Ì¬
+		public int state; // è®¾å¤‡çŠ¶æ€
 		public int rssi;
 		public BluetoothGattService bas;
 		public BluetoothGattService hts;
-		public double temp_value; // ÎÂ¶ÈÖµ,ÉãÊÏ¶È
-		public int battery_value; // µç³ØµçÁ¿£¬°Ù·Ö±È
+		public double temp_value; // æ¸©åº¦å€¼,æ‘„æ°åº¦
+		public int battery_value; // ç”µæ± ç”µé‡ï¼Œç™¾åˆ†æ¯”
 
 		public DeviceEntry(BluetoothDevice s_device, int s_state) {
 			device = s_device;
@@ -102,10 +102,8 @@ public class DeviceListAdapter extends BaseAdapter {
 				holder.title = (TextView) convertView.findViewById(R.id.title);
 				holder.info = (TextView) convertView.findViewById(R.id.info);
 				holder.rssi = (TextView) convertView.findViewById(R.id.rssi);
-				holder.temp = (TextView) convertView
-						.findViewById(R.id.temp_value);
-				holder.bat = (TextView) convertView
-						.findViewById(R.id.bat_value);
+				holder.temp = (TextView) convertView.findViewById(R.id.temp_value);
+				holder.bat = (TextView) convertView.findViewById(R.id.bat_value);
 			}
 		} else {
 			holder = (itemHolder) convertView.getTag();
@@ -128,8 +126,7 @@ public class DeviceListAdapter extends BaseAdapter {
 		}
 
 		if (item.temp_value != INVALID_TEMP_VALUE) {
-			holder.temp.setText("     " + Double.toString(item.temp_value)
-					+ "¡æ");
+			holder.temp.setText("     " + Double.toString(item.temp_value) + "â„ƒ");
 		}
 
 		/*
