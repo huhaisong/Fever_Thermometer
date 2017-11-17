@@ -5,7 +5,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.sanyecao.hu.fever_thermometer"
+        applicationId "com.sanyecao.hu.fever.thermometer"
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
@@ -55,4 +55,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     //greendao数据库框架
     compile 'org.greenrobot:greendao:3.2.2'
+    //进程保活
+    compile 'com.coolerfall:android-app-daemon:1.2.0'
 }

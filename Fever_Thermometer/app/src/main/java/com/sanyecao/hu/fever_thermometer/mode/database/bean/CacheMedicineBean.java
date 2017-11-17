@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by huhaisong on 2017/9/2 16:06.
+ * 常用的用要名称
  */
 
 @Entity
@@ -41,5 +42,7 @@ public class CacheMedicineBean {
     public void setMedicineName(String medicineName) {
         this.medicineName = medicineName;
     }
+
+
 
 }

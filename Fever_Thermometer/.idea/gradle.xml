@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/appdemo" />
             <option value="$PROJECT_DIR$/apptest" />
+            <option value="$PROJECT_DIR$/scale" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

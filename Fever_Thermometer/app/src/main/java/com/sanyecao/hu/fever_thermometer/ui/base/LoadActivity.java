@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.sanyecao.hu.fever_thermometer.R;
-import com.sanyecao.hu.fever_thermometer.ui.view.GlideCircleTransform;
+import com.sanyecao.hu.fever_thermometer.ui.widget.GlideCircleTransform;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +37,7 @@ public class LoadActivity extends BaseActivity {
                 startActivity(new Intent(mContext, MainActivity.class));
                 ActivityStack.getInstance().popAndFinish();
             }
-        }, 3000);
+        }, 500);
     }
 
     @Override

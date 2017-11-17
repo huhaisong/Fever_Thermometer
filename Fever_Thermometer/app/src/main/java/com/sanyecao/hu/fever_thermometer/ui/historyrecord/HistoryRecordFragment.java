@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 /**
  * Created by huhaisong on 2017/8/15 13:44.
+ *
  */
 
 public class HistoryRecordFragment extends Fragment {

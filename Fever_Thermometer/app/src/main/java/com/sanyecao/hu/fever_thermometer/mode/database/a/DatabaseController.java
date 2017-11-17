@@ -3,13 +3,14 @@ package com.sanyecao.hu.fever_thermometer.mode.database.a;
 import android.content.Context;
 
 import com.sanyecao.hu.fever_thermometer.FeverThermometerApplication;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.AlarmBean;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.AlarmBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.BabyBean;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.BabyBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.CacheMedicineBean;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.CacheMedicineBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.DaoSession;
-import com.sanyecao.hu.fever_thermometer.mode.database.bean.MachineBean;
-import com.sanyecao.hu.fever_thermometer.mode.database.bean.MachineBeanDao;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.MedicineRecodeBean;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.MedicineRecodeBeanDao;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.RecodeNoteBean;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.RecodeNoteBeanDao;
@@ -20,7 +21,7 @@ import org.greenrobot.greendao.query.Query;
 
 import java.util.List;
 
-/**
+/*
  * Created by huhaisong on 2017/8/30 11:15.
  */
 
@@ -34,7 +35,7 @@ public class DatabaseController {
     private CacheMedicineBeanDao cachMedicineBeanDao;
     private TemperatureRecodeBeanDao temperatureRecodeBeanDao;
     private MedicineRecodeBeanDao medicineRecodeBeanDao;
-    private MachineBeanDao machineBeanDao;
+    private AlarmBeanDao alarmBeanDao;
     private static DatabaseController mInstance;
 
     private DatabaseController() {
@@ -52,13 +53,7 @@ public class DatabaseController {
         cachMedicineBeanDao = daoSession.getCacheMedicineBeanDao();
         temperatureRecodeBeanDao = daoSession.getTemperatureRecodeBeanDao();
         medicineRecodeBeanDao = daoSession.getMedicineRecodeBeanDao();
-        machineBeanDao = daoSession.getMachineBeanDao();
-    }
-
-    public List<BabyBean> queryBabyBeanByMachineId(int machineId) {
-        Query<BabyBean> babyBeanQuery = babyBeanDao.queryBuilder().where(BabyBeanDao.Properties.MachineId.eq(machineId)).build();
-        List<BabyBean> babyBeanList = babyBeanQuery.list();
-        return babyBeanList;
+        alarmBeanDao = daoSession.getAlarmBeanDao();
     }
 
     public BabyBean queryBabyBeanByName(String name) {
@@ -70,7 +65,16 @@ public class DatabaseController {
         return babyBeanList.get(0);
     }
 
-    public List<BabyBean> getAllBabyBean() {
+    public BabyBean queryBabyBeanById(int id) {
+        Query<BabyBean> babyBeanQuery = babyBeanDao.queryBuilder().where(BabyBeanDao.Properties.Id.eq(id)).build();
+        List<BabyBean> babyBeanList = babyBeanQuery.list();
+        if (babyBeanList == null || babyBeanList.size() == 0) {
+            return null;
+        }
+        return babyBeanList.get(0);
+    }
+
+    public List<BabyBean> queryAllBabyBean() {
         Query<BabyBean> babyBeanQuery = babyBeanDao.queryBuilder().build();
         List<BabyBean> babyBeanList = babyBeanQuery.list();
         return babyBeanList;
@@ -88,14 +92,32 @@ public class DatabaseController {
         babyBeanDao.delete(babyBean);
     }
 
-    public void addRecodeNoteBean(RecodeNoteBean recodeNoteBean) {
-        recodeNoteBeanDao.insert(recodeNoteBean);
-    }
-
     public void addBabyBean(BabyBean babyBean) {
         babyBeanDao.insert(babyBean);
     }
 
+    /*关于事件记录*/
+    public void addRecodeNoteBean(RecodeNoteBean recodeNoteBean) {
+        recodeNoteBeanDao.insert(recodeNoteBean);
+    }
+
+    public List<RecodeNoteBean> queryAllRecodeNoteBean() {
+        Query<RecodeNoteBean> recodeNoteBeanQuery = recodeNoteBeanDao.queryBuilder().build();
+        return recodeNoteBeanQuery.list();
+    }
+    public void deleteRecodeNoteBeanById(int id) {
+        RecodeNoteBean recodeNoteBean = queryRecodeNoteBeanById(id);
+        recodeNoteBeanDao.delete(recodeNoteBean);
+    }
+
+    public RecodeNoteBean queryRecodeNoteBeanById(int id) {
+        Query<RecodeNoteBean> recodeNoteBeanQuery = recodeNoteBeanDao
+                .queryBuilder().where(RecodeNoteBeanDao.Properties.Id.eq(id)).build();
+        return recodeNoteBeanQuery.list().get(0);
+    }
+    /*关于事件记录*/
+
+    /*关于已保存供选择的药品*/
     public void addCachMedicine(CacheMedicineBean cachMedicineBean) {
         cachMedicineBeanDao.insert(cachMedicineBean);
     }
@@ -121,9 +143,11 @@ public class DatabaseController {
         CacheMedicineBean cacheMedicineBean = queryCacheMedicineByName(name);
         cachMedicineBeanDao.delete(cacheMedicineBean);
     }
+    /*关于已保存供选择的药品*/
 
+    /*关于已经记录的宝宝温度*/
     public List<TemperatureRecodeBean> queryTemperatureRecodeByBabyIdAndTimeOrderByTime
-            (int babyId, String time) {
+    (int babyId, String time) {
         Query<TemperatureRecodeBean> query = temperatureRecodeBeanDao.queryBuilder()
                 .where(TemperatureRecodeBeanDao.Properties.BabyId.eq(babyId),
                         TemperatureRecodeBeanDao.Properties.Time.like(time + "%"))
@@ -135,31 +159,52 @@ public class DatabaseController {
     public void addTemperatureRecode(TemperatureRecodeBean temperatureRecodeBean) {
         temperatureRecodeBeanDao.insert(temperatureRecodeBean);
     }
+    /*关于已经记录的宝宝温度*/
 
-    public List<RecodeNoteBean> queryAllRecodeNoteBean() {
-        Query<RecodeNoteBean> recodeNoteBeanQuery = recodeNoteBeanDao.queryBuilder().build();
-        return recodeNoteBeanQuery.list();
+    /*关于服药记录*/
+    public void addMedicineRecodeBean(MedicineRecodeBean medicineRecodeBean) {
+        medicineRecodeBeanDao.insert(medicineRecodeBean);
     }
 
-    public MachineBean queryMachineById(int machineId) {
-        MachineBean machineBean = machineBeanDao.queryBuilder().where(MachineBeanDao.Properties.Id.eq(machineId)).build().unique();
-        return machineBean;
+    public List<MedicineRecodeBean> queryAllMedicineRecodeBean() {
+        Query<MedicineRecodeBean> medicineRecodeBeanQuery = medicineRecodeBeanDao.queryBuilder().build();
+        return medicineRecodeBeanQuery.list();
     }
 
-    public MachineBean queryMachineByAdress(String machineAddress) {
-        Query<MachineBean> machineBeanQuery = machineBeanDao.queryBuilder().where(MachineBeanDao.Properties.Address.eq(machineAddress)).build();
-        List<MachineBean> list = machineBeanQuery.list();
+    public void deleteMedicineRecodeBeanById(int id) {
+        MedicineRecodeBean medicineRecodeBean = queryMedicineRecodeBeanById(id);
+        medicineRecodeBeanDao.delete(medicineRecodeBean);
+    }
+
+    public MedicineRecodeBean queryMedicineRecodeBeanById(int id) {
+        Query<MedicineRecodeBean> medicineRecodeBeanQuery = medicineRecodeBeanDao
+                .queryBuilder().where(MedicineRecodeBeanDao.Properties.Id.eq(id)).build();
+        return medicineRecodeBeanQuery.list().get(0);
+    }
+    /*关于服药记录*/
+
+    /* 关于闹钟提醒*/
+    public void addAlarmBean(AlarmBean alarmBean) {
+        alarmBeanDao.insert(alarmBean);
+    }
+
+    public List<AlarmBean> queryAllAlarmBean() {
+        Query<AlarmBean> alarmBeanQuery = alarmBeanDao.queryBuilder().build();
+        return alarmBeanQuery.list();
+    }
+
+    public AlarmBean queryAlarmBeanByTime(String time) {
+        Query<AlarmBean> alarmBeanQuery = alarmBeanDao.queryBuilder().where(AlarmBeanDao.Properties.Time.eq(time)).build();
+        List<AlarmBean> list = alarmBeanQuery.list();
         if (list.size() == 0) {
             return null;
         }
         return list.get(0);
     }
 
-    public void addMachine(MachineBean machineBean) {
-        machineBeanDao.insert(machineBean);
+    public void deleteAlarmBeanByTime(String time) {
+        AlarmBean alarmBean = queryAlarmBeanByTime(time);
+        alarmBeanDao.delete(alarmBean);
     }
-
-    public void updateMachine(MachineBean machineBean) {
-        machineBeanDao.update(machineBean);
-    }
+    /*关于闹钟提醒*/
 }

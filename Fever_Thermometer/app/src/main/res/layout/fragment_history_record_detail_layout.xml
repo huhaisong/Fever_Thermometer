@@ -3,13 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-
+    <View
+        android:id="@+id/LinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/tv_time"
@@ -31,7 +33,7 @@
             android:layout_marginRight="20dp" />
     </LinearLayout>
 
-    <com.sanyecao.hu.fever_thermometer.ui.view.FeverTemperatureGridView
+    <com.sanyecao.hu.fever_thermometer.ui.widget.FeverTemperatureGridView
         android:id="@+id/gv_fever_temperature"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -40,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.sanyecao.hu.fever_thermometer.ui.view.MyListView
+        <com.sanyecao.hu.fever_thermometer.ui.widget.MyListView
             android:id="@+id/listView_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

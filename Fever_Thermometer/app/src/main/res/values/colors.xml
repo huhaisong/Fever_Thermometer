@@ -31,5 +31,7 @@
 
     <color name="border_clo">#ccc</color>
     <color name="text_clo">#333</color>
+    <color name="app_background">#506496</color>
+    <color name="app_background_selected">#556793</color>
 
 </resources>

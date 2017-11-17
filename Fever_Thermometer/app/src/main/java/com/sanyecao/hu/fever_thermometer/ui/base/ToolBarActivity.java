@@ -1,10 +1,8 @@
 package com.sanyecao.hu.fever_thermometer.ui.base;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,6 +69,13 @@ public abstract class ToolBarActivity extends BaseActivity {
     //设置右边的imageview的图片的点击事件
     public void setBarImageViewListener(View.OnClickListener listener) {
         barImageView.setOnClickListener(listener);
+    }
+
+    public void initBar() {
+        barTextView.setVisibility(View.GONE);
+        barImageView.setVisibility(View.GONE);
+        barTextView.setOnClickListener(null);
+        barImageView.setOnClickListener(null);
     }
 
     @Override

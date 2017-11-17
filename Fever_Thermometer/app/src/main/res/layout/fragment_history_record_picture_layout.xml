@@ -1,13 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <TextView
-        android:gravity="center"
-        android:textSize="24sp"
-        android:id="@+id/textView2"
+    <LinearLayout
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="history_record_picture" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="日期：2017年8月18日" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="姓名:" />
+
+        <Spinner
+            android:id="@+id/spinner_baby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="性别：   " />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="年龄：   " />
+    </LinearLayout>
+
+    <com.sanyecao.hu.fever_thermometer.ui.widget.FeverTemperatureGridView
+        android:id="@+id/gv_fever_temperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

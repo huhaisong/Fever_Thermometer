@@ -1,6 +1,7 @@
 package com.sanyecao.hu.fever_thermometer.ui.base;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -21,7 +22,7 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.sanyecao.hu.fever_thermometer.R;
-import com.sanyecao.hu.fever_thermometer.ui.view.GlideCircleTransform;
+import com.sanyecao.hu.fever_thermometer.ui.widget.GlideCircleTransform;
 import com.sanyecao.hu.fever_thermometer.utils.ToastUtils;
 
 import java.lang.reflect.Field;
@@ -90,7 +91,10 @@ public abstract class DrawerActivity extends BaseActivity {
             if (!closeDrawer()) {
                 long curClickTime = System.currentTimeMillis();
                 if ((curClickTime - mFirstClickTime) < 1000) {
-                    ActivityStack.getInstance().cleanAll();
+//                    ActivityStack.getInstance().cleanAll();
+                    Intent home=new Intent(Intent.ACTION_MAIN);
+                    home.addCategory(Intent.CATEGORY_HOME);
+                    startActivity(home);
                 } else {
                     ToastUtils.show(this, "再点击一次将退出应用");
                     mFirstClickTime = curClickTime;

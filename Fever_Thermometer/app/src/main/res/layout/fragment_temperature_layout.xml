@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-   >
+    android:layout_height="match_parent">
 
-    <com.sanyecao.hu.fever_thermometer.ui.view.MyViewPager
+    <com.sanyecao.hu.fever_thermometer.ui.widget.MyViewPager
         android:id="@+id/temperature_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/app_background" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_transparent">
+        android:background="@color/white_transparent"
+        android:gravity="center_horizontal">
 
         <LinearLayout
             android:id="@+id/viewGroup"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="70dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal" />
     </RelativeLayout>

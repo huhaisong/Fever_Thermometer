@@ -2,13 +2,19 @@ package com.sanyecao.hu.fever_thermometer.ui.temperature;
 
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,13 +26,14 @@ import com.bumptech.glide.Glide;
 import com.sanyecao.hu.fever_thermometer.R;
 import com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController;
 import com.sanyecao.hu.fever_thermometer.mode.database.bean.BabyBean;
-import com.sanyecao.hu.fever_thermometer.ui.alarm.AlarmActivity;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.TemperatureRecodeBean;
+import com.sanyecao.hu.fever_thermometer.ui.dialog.InformationDialog;
 import com.sanyecao.hu.fever_thermometer.ui.dialog.NameEditDialog;
-import com.sanyecao.hu.fever_thermometer.ui.medicine_recode.MedicineActivity;
-import com.sanyecao.hu.fever_thermometer.ui.view.CircleView;
-import com.sanyecao.hu.fever_thermometer.ui.view.GlideCircleTransform;
-
-import java.util.List;
+import com.sanyecao.hu.fever_thermometer.ui.temperature.alarm.AlarmActivity;
+import com.sanyecao.hu.fever_thermometer.ui.temperature.medicine.MedicineActivity;
+import com.sanyecao.hu.fever_thermometer.ui.widget.CircleView;
+import com.sanyecao.hu.fever_thermometer.ui.widget.GlideCircleTransform;
+import com.sanyecao.hu.fever_thermometer.utils.TimeUtils;
 
 import static android.app.Activity.RESULT_OK;
 import static com.sanyecao.hu.fever_thermometer.ui.temperature.TemperatureFragment.myBinder;
@@ -41,24 +48,19 @@ public class MachineFragment extends Fragment {
     public static final int MESSAGE_UPDATE_TEMPERATURE = 3;
     public static final int MESSAGE_UPDATE_BATTERY_LEVEL = 2;
     public static final int MESSAGE_UPDATE_CONNECTED_STATE = 1;
-    public static final int MESSAGE_CONNECTE_OUT_TIME = 4;
+    public static final int MESSAGE_CONNECT_OUT_TIME = 4;
     private ImageView babyImageView;
     private TextView informationTextView;
     private TextView babyTextView;
     private ImageView alarmImageView;
     private ImageView medicineRecodeImageView;
-    private int machineId;
     private BabyBean mBabyBean;
     private TemperatureFragment temperatureFragment;
-    View view;
+    private View view;
 
-    public MachineFragment(int machineId, TemperatureFragment temperatureFragment) {
-        this.machineId = machineId;
+    public MachineFragment(TemperatureFragment temperatureFragment, BabyBean babyBean) {
         this.temperatureFragment = temperatureFragment;
-    }
-
-    public void setMachineId(int machineId) {
-        this.machineId = machineId;
+        this.mBabyBean = babyBean;
     }
 
     @Nullable
@@ -72,8 +74,20 @@ public class MachineFragment extends Fragment {
     }
 
     private void initData() {
-
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        getActivity().registerReceiver(myBroadcastReceiver, filter);
     }
+
+    private BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_ON) {
+                informationTextView.setVisibility(View.GONE);
+            } else if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {
+                informationTextView.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 
     private CircleView machineCircleView;
     private static final String TAG = "MachineFragment";
@@ -83,25 +97,25 @@ public class MachineFragment extends Fragment {
         machineCircleView = (CircleView) view.findViewById(R.id.circle_view_machine);
         machineCircleView.setClickable(true);
         informationTextView = (TextView) view.findViewById(R.id.tv_information);
+        informationTextView.setVisibility(View.GONE);
+        if (myBinder != null) {
+            if (!myBinder.getEnableState())
+                informationTextView.setVisibility(View.VISIBLE);
+        }
         alarmImageView = (ImageView) view.findViewById(R.id.iv_alarm);
         medicineRecodeImageView = (ImageView) view.findViewById(R.id.iv_medicine_recode);
         babyImageView = (ImageView) view.findViewById(R.id.iv_baby);
         babyTextView = (TextView) view.findViewById(R.id.tv_baby_name);
         mDatabaseController = DatabaseController.getmInstance();
-        List<BabyBean> babyBeanList = mDatabaseController.queryBabyBeanByMachineId(machineId);
-
-        if (babyBeanList != null && babyBeanList.size() > 0) {
-            mBabyBean = babyBeanList.get(0);
-        }
 
         if (mBabyBean != null)
             babyTextView.setText(mBabyBean.getName());
         else {
             babyTextView.setText("Baby");
             mBabyBean = new BabyBean();
-            mBabyBean.setMachineId(machineId);
             mBabyBean.setName("Baby");
             mDatabaseController.addBabyBean(mBabyBean);
+            mBabyBean = mDatabaseController.queryBabyBeanByName("Baby");
         }
 
         if (mBabyBean.getImage_url() != null)
@@ -145,14 +159,16 @@ public class MachineFragment extends Fragment {
                 if (myBinder != null) {
                     if (isConnected) {
                         machineCircleView.setContent("Unconnected");
+                        machineCircleView.setCircleColor(ContextCompat.getColor(getContext(), R.color.blue));
                         myBinder.closeBluetoothService();
                         temperatureFragment.viewPager.setScrollble(true);
                         isConnected = false;
                     } else {
                         Log.e(TAG, "onClick: myBinder ！= null");
-                        handler.sendEmptyMessageDelayed(MESSAGE_CONNECTE_OUT_TIME, 30 * 1000);
+                        handler.sendEmptyMessageDelayed(MESSAGE_CONNECT_OUT_TIME, 30 * 1000);
+                        machineCircleView.setCircleColor(ContextCompat.getColor(getContext(), R.color.blue));
                         machineCircleView.setContent("Connecting");
-                        myBinder.connectMachine(handler, machineId);
+                        myBinder.connectMachine(handler);
                     }
                 }
             }
@@ -206,14 +222,14 @@ public class MachineFragment extends Fragment {
                     machineCircleView.setContent("connected");
                     break;
                 case MESSAGE_UPDATE_TEMPERATURE:
-                    handler.removeMessages(MESSAGE_CONNECTE_OUT_TIME);
+                    handler.removeMessages(MESSAGE_CONNECT_OUT_TIME);
+                    isConnected = true;
                     Bundle bundle = msg.getData();
                     double temperature = bundle.getDouble("temperature");
-                    machineCircleView.setContent(temperature + " ℃");
-                    isConnected = true;
                     temperatureFragment.viewPager.setScrollble(false);
+                    updateTemperature((float) temperature);
                     break;
-                case MESSAGE_CONNECTE_OUT_TIME:
+                case MESSAGE_CONNECT_OUT_TIME:
                     machineCircleView.setContent("Unconnected");
                     myBinder.stopServiceScan();
                     break;
@@ -224,12 +240,33 @@ public class MachineFragment extends Fragment {
         }
     });
 
-    private void updateTemperature() {
+    private void updateTemperature(float temperature) {
+        int r, b;
+        int g = 30;
+        float sub = temperature - 35;
+        if (sub < 1.5) {
+            r = 0;
+            b = 255;
+        } else if (sub > 3) {
+            r = 255;
+            b = 0;
+            highTemperatureDialog();
+        } else {
+            r = (int) (85 * sub);
+            b = 30;
+        }
+        machineCircleView.setContent(temperature + " ℃");
+        machineCircleView.setCircleColor(Color.rgb(r, g, b));
+        TemperatureRecodeBean temperatureRecodeBean = new TemperatureRecodeBean();
+        temperatureRecodeBean.setBabyId(Integer.valueOf(mBabyBean.getId() + ""));
+        temperatureRecodeBean.setTime(TimeUtils.getCurTimeString());
+        temperatureRecodeBean.setTemperature(temperature);
+        DatabaseController.getmInstance().addTemperatureRecode(temperatureRecodeBean);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    private void highTemperatureDialog() {
+        InformationDialog informationDialog = new InformationDialog(getContext(), "High Temperature!");
+        informationDialog.show();
     }
 
     public void goToMedicineRecode() {

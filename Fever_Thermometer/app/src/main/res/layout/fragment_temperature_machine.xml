@@ -28,7 +28,7 @@
             android:layout_marginTop="5dp"
             android:src="@drawable/header" />
 
-        <com.sanyecao.hu.fever_thermometer.ui.view.CircleView
+        <com.sanyecao.hu.fever_thermometer.ui.widget.CircleView
             android:id="@+id/circle_view_machine"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

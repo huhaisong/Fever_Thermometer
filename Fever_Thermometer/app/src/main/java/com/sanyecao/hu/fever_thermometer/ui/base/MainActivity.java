@@ -1,5 +1,6 @@
 package com.sanyecao.hu.fever_thermometer.ui.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.sanyecao.hu.fever_thermometer.R;
+import com.sanyecao.hu.fever_thermometer.service.AlarmService;
+import com.sanyecao.hu.fever_thermometer.service.DaemonService;
 import com.sanyecao.hu.fever_thermometer.ui.historyrecord.HistoryRecordFragment;
 import com.sanyecao.hu.fever_thermometer.ui.setting.SettingFragment;
 import com.sanyecao.hu.fever_thermometer.ui.temperature.TemperatureFragment;
@@ -42,13 +45,16 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startService(new Intent(this, AlarmService.class));
         initData();
         initView();
         initListener();
     }
 
+
     @Override
     public void initData() {
+        startService(new Intent(this, DaemonService.class));
         fragmentManager = getSupportFragmentManager();
     }
 

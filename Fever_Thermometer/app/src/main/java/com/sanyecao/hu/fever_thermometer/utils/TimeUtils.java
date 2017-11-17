@@ -1,5 +1,7 @@
 package com.sanyecao.hu.fever_thermometer.utils;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -467,4 +469,21 @@ public class TimeUtils {
         times[4] = calendar.get(Calendar.MINUTE);
         return times;
     }
+
+
+    public static void showTime(long time, String str) {
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.setTimeInMillis(time);
+        int year, month, day, hour, minute, second;
+        year = mCalendar.get(Calendar.YEAR);
+        month = mCalendar.get(Calendar.MONTH);
+        day = mCalendar.get(Calendar.DAY_OF_MONTH);
+        hour = mCalendar.get(Calendar.HOUR_OF_DAY);
+        minute = mCalendar.get(Calendar.MINUTE);
+        second = mCalendar.get(Calendar.SECOND);
+        Log.e(TAG, str + ":" + "year:" + year + ",month:" + month + ",day:" + day
+                + ",hour:" + hour + ",minute:" + minute + ",second:" + second);
+    }
+
+    private static final String TAG = "TimeUtils";
 }

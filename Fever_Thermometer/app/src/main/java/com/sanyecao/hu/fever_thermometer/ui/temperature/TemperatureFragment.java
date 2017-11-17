@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -21,10 +24,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.sanyecao.hu.fever_thermometer.R;
-import com.sanyecao.hu.fever_thermometer.mode.logic.temperature.TemperatureController;
+import com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController;
+import com.sanyecao.hu.fever_thermometer.mode.database.bean.BabyBean;
 import com.sanyecao.hu.fever_thermometer.service.BluetoothService;
 import com.sanyecao.hu.fever_thermometer.ui.base.MainActivity;
-import com.sanyecao.hu.fever_thermometer.ui.view.MyViewPager;
+import com.sanyecao.hu.fever_thermometer.ui.widget.MyViewPager;
 
 import java.util.ArrayList;
 
@@ -36,28 +40,41 @@ import static android.content.Context.BIND_AUTO_CREATE;
 
 @TargetApi(Build.VERSION_CODES.M)
 public class TemperatureFragment extends Fragment {
-    private static TemperatureFragment mInstance;
-    private Context mContext;
     private ImageView[] dots;
     private LinearLayout dotViewLayout;
     public MyViewPager viewPager;
-    private TemperatureController temperatureController;
-    private ArrayList<MachineFragment> machineFragments;
+    private ArrayList<Fragment> machineFragments = new ArrayList<>();
     private MyOnPagerChangeListener myOnPagerChangeListener;
     private MainActivity.MyOnTouchListener myOnTouchListener;
     private TemperatureAdapter temperatureAdapter;
+    ArrayList<BabyBean> babyBeanArrayList = new ArrayList<>();
 
     public static TemperatureFragment getInstance() {
-        return mInstance == null ? mInstance = new TemperatureFragment() : mInstance;
+        return new TemperatureFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e(TAG, "onCreate: ");
+    }
+
+    public TemperatureFragment() {
+        final GestureDetector mGestureDetector = new GestureDetector(getActivity(), new MyOnGestureListener());
+        myOnTouchListener = new MainActivity.MyOnTouchListener() {
+            @Override
+            public boolean onTouch(MotionEvent ev) {
+                return mGestureDetector.onTouchEvent(ev);
+            }
+        };
+        myOnPagerChangeListener = new MyOnPagerChangeListener();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_temperature_layout, container, false);
-        initData();
-        initView(rootView);
-        initListen();
+        init(rootView);
         return rootView;
     }
 
@@ -75,49 +92,39 @@ public class TemperatureFragment extends Fragment {
         }
     };
 
-    private void initData() {
-
+    private void init(View view) {
         Intent bindIntent = new Intent(getContext(), BluetoothService.class);
         getActivity().bindService(bindIntent, connection, BIND_AUTO_CREATE);
+        ((MainActivity) getActivity()).setMainToolBarTitle("temperature");
 
-        final GestureDetector mGestureDetector = new GestureDetector(getActivity(), new MyOnGestureListener());
-        myOnTouchListener = new MainActivity.MyOnTouchListener() {
-            @Override
-            public boolean onTouch(MotionEvent ev) {
-                return mGestureDetector.onTouchEvent(ev);
-            }
-        };
-        temperatureController = new TemperatureController(mContext);
         if (machineFragments != null)
             machineFragments.clear();
         else
             machineFragments = new ArrayList<>();
-        for (int i = 0; i < temperatureController.getMachineNum(); i++) {
-            MachineFragment machineFragment = new MachineFragment(i, TemperatureFragment.this);
-            machineFragments.add(machineFragment);
+        babyBeanArrayList = (ArrayList<BabyBean>) DatabaseController.getmInstance().queryAllBabyBean();
+        if (babyBeanArrayList.size() > 0) {
+            for (int i = 0; i < babyBeanArrayList.size(); i++) {
+                MachineFragment machineFragment = new MachineFragment(TemperatureFragment.this, babyBeanArrayList.get(i));
+                machineFragments.add(machineFragment);
+            }
         }
-        myOnPagerChangeListener = new MyOnPagerChangeListener();
+        machineFragments.add(new AddMachineFragment(TemperatureFragment.this));
         temperatureAdapter = new TemperatureAdapter(getChildFragmentManager(), machineFragments);
-    }
 
-    private void initView(View view) {
         dotViewLayout = (LinearLayout) view.findViewById(R.id.viewGroup);
         viewPager = (MyViewPager) view.findViewById(R.id.temperature_viewpager);
+
         viewPager.setScrollble(true);
         initDots();
-        ((MainActivity) getActivity()).setMainToolBarTitle("temperature");
-    }
-
-    private void initListen() {
         viewPager.setAdapter(temperatureAdapter);
         viewPager.setOnPageChangeListener(myOnPagerChangeListener);
         viewPager.setCurrentItem(0);
+        temperatureAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.mContext = context;
     }
 
     @Override
@@ -134,7 +141,7 @@ public class TemperatureFragment extends Fragment {
 
     private void initDots() {
         dotViewLayout.removeAllViews();
-        dots = new ImageView[temperatureController.getMachineNum()];
+        dots = new ImageView[babyBeanArrayList.size() + 1];
         for (int i = 0; i < dots.length; i++) {
             ImageView imageView = new ImageView(getActivity());
             imageView.setLayoutParams(new ViewGroup.LayoutParams(10, 10));
@@ -164,6 +171,18 @@ public class TemperatureFragment extends Fragment {
 
     private static final String TAG = "TemperatureFragment";
 
+    public void addBabyAndUpdate() {
+        BabyBean babyBean = new BabyBean();
+        babyBean.setName("Baby");
+        DatabaseController.getmInstance().addBabyBean(babyBean);
+        babyBeanArrayList = (ArrayList<BabyBean>) DatabaseController.getmInstance().queryAllBabyBean();
+        initDots();
+        machineFragments.add(babyBeanArrayList.size() - 1, new MachineFragment(TemperatureFragment.this, babyBeanArrayList.get(babyBeanArrayList.size() - 1)));
+        temperatureAdapter.notifyDataSetChanged();
+        viewPager.setCurrentItem(babyBeanArrayList.size() - 1);
+        updateDots((babyBeanArrayList.size() - 1) % (babyBeanArrayList.size() + 1));
+    }
+
     private class MyOnPagerChangeListener implements ViewPager.OnPageChangeListener {
         private boolean flag = false;
 
@@ -173,7 +192,7 @@ public class TemperatureFragment extends Fragment {
 
         @Override
         public void onPageSelected(int position) {
-            updateDots(position % temperatureController.getMachineNum());
+            updateDots(position % (babyBeanArrayList.size() + 1));
         }
 
         @Override
@@ -181,7 +200,6 @@ public class TemperatureFragment extends Fragment {
             Log.d("vivi", "onPageScrollStateChanged: " + state);
             switch (state) {
                 case ViewPager.SCROLL_STATE_DRAGGING:
-                    //拖的时候才进入下一页
                     flag = false;
                     Log.e("vivi", "SCROLL_STATE_DRAGGING: " + ViewPager.SCROLL_STATE_DRAGGING);
                     break;
@@ -190,8 +208,8 @@ public class TemperatureFragment extends Fragment {
                     Log.e("vivi", "SCROLL_STATE_SETTLING: " + ViewPager.SCROLL_STATE_SETTLING);
                     break;
                 case ViewPager.SCROLL_STATE_IDLE:
-                    Log.e("vivi", "SCROLL_STATE_IDLE: " + ViewPager.SCROLL_STATE_IDLE + "  mViewPager.getCurrentItem() " + viewPager.getCurrentItem());
-                    //判断是不是最后一页，同是是不是拖的状态
+                    Log.e("vivi", "SCROLL_STATE_IDLE: " + ViewPager.SCROLL_STATE_IDLE + "  mViewPager.getCurrentItem()" + viewPager.getCurrentItem());
+                    //判断是不是最后一页，同时是不是拖的状态
                     if (viewPager.getCurrentItem() == temperatureAdapter.getCount() - 1 && !flag) {
                         Log.e(TAG, "onPageScrollStateChanged: add new machine");
                         // overridePendingTransition(0, 0);
@@ -258,5 +276,30 @@ public class TemperatureFragment extends Fragment {
         if (myBinder != null)
             myBinder.closeBluetoothService();
         getActivity().unbindService(connection);
+    }
+
+    private class TemperatureAdapter extends FragmentStatePagerAdapter {
+        ArrayList<Fragment> fragments;
+
+        TemperatureAdapter(FragmentManager fm, ArrayList<Fragment> fragments) {
+            super(fm);
+            this.fragments = fragments;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return PagerAdapter.POSITION_NONE;
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
     }
 }

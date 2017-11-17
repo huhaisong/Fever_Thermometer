@@ -24,14 +24,11 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController;
-import com.sanyecao.hu.fever_thermometer.mode.database.bean.MachineBean;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.sanyecao.hu.fever_thermometer.mode.database.a.DatabaseController.getmInstance;
+import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_CONNECT_OUT_TIME;
 import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_UPDATE_BATTERY_LEVEL;
 import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_UPDATE_CONNECTED_STATE;
 import static com.sanyecao.hu.fever_thermometer.ui.temperature.MachineFragment.MESSAGE_UPDATE_TEMPERATURE;
@@ -69,10 +66,9 @@ public class BluetoothService extends Service {
     private static final int FIRST_BIT_MASK = 0x01;
 
     private BluetoothAdapter mBluetoothAdapter;
-    private int mMachineId;
     private Handler mHandler;
-    private MachineBean mMachineBean;
     private BluetoothGatt mBluetoothGatt;
+    private String adress;
 
     public BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         private final int HIDE_MSB_8BITS_OUT_OF_16BITS = 0x00FF;
@@ -96,10 +92,12 @@ public class BluetoothService extends Service {
                     mHandler.sendEmptyMessage(MESSAGE_UPDATE_CONNECTED_STATE);
                     gatt.discoverServices();
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    connect(mMachineBean.getAddress());
+                    connect(adress);
+                    mHandler.sendEmptyMessageDelayed(MESSAGE_CONNECT_OUT_TIME, 3 * 1000);
                 }
             } else if (status == 133) {
-                connect(mMachineBean.getAddress());
+                connect(adress);
+                mHandler.sendEmptyMessageDelayed(MESSAGE_CONNECT_OUT_TIME, 3 * 1000);
             }
         }
 
@@ -292,6 +290,7 @@ public class BluetoothService extends Service {
     //扫描蓝牙
     public void startScan() {
         Log.e(TAG, "startScan: ");
+        stopScan();
         closeBluetooth();
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
@@ -319,6 +318,7 @@ public class BluetoothService extends Service {
 
     //链接外设蓝牙
     public boolean connect(final String address) {
+        Log.e(TAG, "connect: ");
         stopScan();
         closeBluetooth();
         if (mBluetoothAdapter == null || address == null) {
@@ -333,16 +333,8 @@ public class BluetoothService extends Service {
     }
 
     public class BleBinder extends Binder {
-        public void connectMachine(Handler handler, int machineId) {
-            Log.e(TAG, "connectMachine: machineId = " + machineId);
+        public void connectMachine(Handler handler) {
             mHandler = handler;
-            mMachineId = machineId;
-            mMachineBean = getmInstance().queryMachineById(mMachineId);
-            if (mMachineBean == null) {
-                mMachineBean = new MachineBean();
-                mMachineBean.setMachineId(mMachineId);
-                getmInstance().addMachine(mMachineBean);
-            }
             if (mBluetoothAdapter.isEnabled()) {
                 startScan();
             } else {
@@ -357,29 +349,20 @@ public class BluetoothService extends Service {
         public void stopServiceScan() {
             stopScan();
         }
+
+        public boolean getEnableState() {
+            return mBluetoothAdapter.isEnabled();
+        }
     }
 
     public BluetoothAdapter.LeScanCallback leScanHook = new BluetoothAdapter.LeScanCallback() {
 
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             Log.e(TAG, "Found:" + device.getName() + " " + rssi + " " + Arrays.toString(scanRecord));
-            MachineBean machineBean = DatabaseController.getmInstance().queryMachineByAdress(device.getAddress());
-            if (machineBean != null) {
-                Log.e(TAG, "onLeScan: machineBean != null and machineBean = " + machineBean.toString());
-                if (machineBean.getMachineId() != mMachineBean.getMachineId()) {
-                    Log.e(TAG, "onLeScan: the address " + machineBean.getAddress() + "in other machine");
-                    return;
-                }
+            if (device.getName().equals("CLVTK")) {
+                adress = device.getAddress();
+                connect(adress);
             }
-
-            if (device.getName().equals("CLVTK"))
-                if (mMachineBean.getAddress() == null || mMachineBean.getAddress().equals("")) {
-                    Log.e(TAG, "onLeScan: connecting address:" + mMachineBean.getAddress());
-                    mMachineBean.setAddress(device.getAddress());
-                    DatabaseController.getmInstance().updateMachine(mMachineBean);
-                    connect(mMachineBean.getAddress());
-                    Log.e(TAG, "onLeScan: now the machineBean = " + mMachineBean.toString());
-                }
         }
     };
 
