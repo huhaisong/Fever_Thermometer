@@ -9,6 +9,7 @@
         style="@style/mid_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
             android:id="@+id/tv_alarm_switch_model"
             style="@style/usertext"
@@ -45,14 +46,17 @@
 
     <LinearLayout
         style="@style/mid_layout"
-        android:clickable="true"
-        android:focusable="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true">
 
         <TextView
-            style="@style/usertext"
-            android:text="报警铃声音量：" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="报警铃声音量："
+            android:textColor="@color/text_clo"
+            android:textSize="16sp" />
 
         <ImageView
             android:layout_width="30dp"
@@ -61,15 +65,14 @@
 
         <SeekBar
             android:id="@+id/volume_seekBar"
-            android:layout_width="100dp"
-            android:layout_height="3dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:background="@color/blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:clickable="true"
             android:focusable="true"
             android:max="100"
-            android:progress="10" />
+            android:progressDrawable="@drawable/bg_seekbar"
+            android:thumb="@drawable/thumb_seekbar" />
 
         <ImageView
             android:layout_width="30dp"

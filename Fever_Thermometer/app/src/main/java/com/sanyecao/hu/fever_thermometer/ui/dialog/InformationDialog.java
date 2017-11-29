@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.sanyecao.hu.fever_thermometer.R;
@@ -23,6 +21,7 @@ public class InformationDialog extends Dialog {
 
     private Context mContext;
     private String content;
+    private OnEnsureListen onEnsureListen;
 
     public InformationDialog(Context context, String content) {
         super(context);
@@ -38,6 +37,14 @@ public class InformationDialog extends Dialog {
         super(context, cancelable, cancelListener);
     }
 
+    public interface OnEnsureListen {
+        void onEnsureListen();
+    }
+
+    public void setOnEnsureListen(OnEnsureListen onEnsureListen) {
+        this.onEnsureListen = onEnsureListen;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,16 +58,16 @@ public class InformationDialog extends Dialog {
         TextView textView = (TextView) view.findViewById(R.id.content);
         textView.setText(content);
         requestWindowFeature(Window.FEATURE_NO_TITLE); //去除title
-        setCancelable(true); //设置点击白色不消失
         setContentView(view);
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = 700;
-        params.height = 500;
-        getWindow().setAttributes(params);
-        getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.window_bg_dialog_information));
+//        WindowManager.LayoutParams params = getWindow().getAttributes();
+//        params.width = 700;
+//        params.height = 500;
+//        getWindow().setAttributes(params);
         view.findViewById(R.id.tv_ensure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (onEnsureListen != null)
+                    onEnsureListen.onEnsureListen();
                 dismiss();
             }
         });

@@ -128,7 +128,6 @@ public class Nammu {
 
 
     //Permission monitoring part below
-
     /**
      * Get list of currently granted permissions, without saving it inside Nammu
      *

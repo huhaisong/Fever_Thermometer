@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sanyecao.hu.fever_thermometer">
 
-
     <!--唤醒-->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.DEVICE_POWER"/>
@@ -14,8 +13,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- The following permissions are OPTIONAL. -->
-
-
     <!-- Used to adjust the work load depending on the type of network the device is using. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

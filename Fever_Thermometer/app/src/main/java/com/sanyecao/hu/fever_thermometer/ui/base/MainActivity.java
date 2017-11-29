@@ -3,7 +3,6 @@ package com.sanyecao.hu.fever_thermometer.ui.base;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
@@ -26,19 +25,19 @@ import static com.sanyecao.hu.fever_thermometer.utils.FragmentUtils.changeFragme
 
 /**
  * Created by huhaisong on 2017/8/15 10:51.
+ *
  */
 
 public class MainActivity extends DrawerActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentManager fragmentManager;
-    private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>();
+    private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList< >();
 
     @Override
     protected int bindMenuId() {
         return TEMPERATURE;
     }
 
-    CollapsingToolbarLayout collapsingToolbarLayout;
     private Toolbar toolbar;
     private TextView mainToolBarTextView;
 
@@ -49,6 +48,7 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         initData();
         initView();
         initListener();
+
     }
 
 
@@ -64,7 +64,6 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         addToolbar(toolbar);
         mainToolBarTextView = (TextView) toolbar.findViewById(R.id.tv_main_toolbar);
-        collapsingToolbarLayout = ((CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar_layout));
         changeFragment(fragmentManager, TemperatureFragment.getInstance(), R.id.fragment_layout);
     }
 
@@ -115,14 +114,14 @@ public class MainActivity extends DrawerActivity implements NavigationView.OnNav
     }
 
     public interface MyOnTouchListener {
-        public boolean onTouch(MotionEvent ev);
+          boolean onTouch(MotionEvent ev);
     }
 
     private static final String TAG = "MainActivity";
 
     public void setMainToolBarTitle(String title) {
         Log.e(TAG, "setMainToolBarTitle: " + title);
-        collapsingToolbarLayout.setTitle(title);
+        toolbar.setTitle(title);
     }
 
     public void setMainToolBarTextViewContent(String s) {

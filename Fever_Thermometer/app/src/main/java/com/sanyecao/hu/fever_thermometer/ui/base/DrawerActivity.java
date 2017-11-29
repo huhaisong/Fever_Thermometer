@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -45,11 +46,11 @@ public abstract class DrawerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         initContentView();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        setDrawerLeftEdgeSize(this,mDrawerLayout,0.15f);
+        setDrawerLeftEdgeSize(this, mDrawerLayout, 0.15f);
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         ImageView mHeadImg = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.iv_nav_head);
 
@@ -92,7 +93,7 @@ public abstract class DrawerActivity extends BaseActivity {
                 long curClickTime = System.currentTimeMillis();
                 if ((curClickTime - mFirstClickTime) < 1000) {
 //                    ActivityStack.getInstance().cleanAll();
-                    Intent home=new Intent(Intent.ACTION_MAIN);
+                    Intent home = new Intent(Intent.ACTION_MAIN);
                     home.addCategory(Intent.CATEGORY_HOME);
                     startActivity(home);
                 } else {

@@ -1,1 +1,1 @@
-include ':app', ':appdemo', ':DaoExample', ':apptest', ':scale'
+include ':app', ':appdemo', ':DaoExample', ':apptest'

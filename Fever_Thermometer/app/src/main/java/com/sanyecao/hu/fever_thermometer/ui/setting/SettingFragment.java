@@ -5,10 +5,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -21,7 +23,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sanyecao.hu.fever_thermometer.comman.Config.ALARM_MODEL_KEY;
 import static com.sanyecao.hu.fever_thermometer.comman.Config.SETTING_SP_KEY;
+import static com.sanyecao.hu.fever_thermometer.comman.Config.TEMPERATURE_DOWN_KEY;
+import static com.sanyecao.hu.fever_thermometer.comman.Config.TEMPERATURE_MEASURE_KEY;
+import static com.sanyecao.hu.fever_thermometer.comman.Config.TEMPERATURE_UP_KEY;
+import static com.sanyecao.hu.fever_thermometer.comman.Config.VOLUME_KEY;
 
 /**
  * Created by huhaisong on 2017/8/15 13:44.
@@ -29,6 +36,7 @@ import static com.sanyecao.hu.fever_thermometer.comman.Config.SETTING_SP_KEY;
 
 public class SettingFragment extends Fragment implements View.OnClickListener {
 
+    private static final String TAG = "SettingFragment";
     View view;
     private static SettingFragment mInstance;
     private static final int ALARM_MODEL_MESSAGE = 0;
@@ -36,13 +44,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private static final int TEMPERATURE_UP_MESSAGE = 2;
     private static final int TEMPERATURE_DOWN_MESSAGE = 3;
     private static final int DELAYED_TIME = 1000;
-    private static final String ALARM_MODEL_KEY = "alarmModelId";
-    private static final String TEMPERATURE_MEASURE_KEY = "temperatureMeasureId";
-    private static final String TEMPERATURE_UP_KEY = "temperatureUpId";
-    private static final String TEMPERATURE_DOWN_KEY = "temperatureDownId";
+
 
     public static SettingFragment getInstance() {
-        return mInstance == null ? mInstance = new SettingFragment() : mInstance;
+        return mInstance = new SettingFragment();
     }
 
     @Nullable
@@ -69,6 +74,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private List<String> temperatureMeasureList;
     private List<String> temperatureList;
     private LinearLayout contentLinearLayout;
+    private SeekBar volumSeekBar;
 
     //data
     private int temperatureMeasureId = 0;
@@ -76,6 +82,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private int temperatureDownId = 0;
     private int alarmModelId = 0;
     private SPUtils spUtils;
+    private int volume = 0;
 
     private void initData() {
         if (alarmModelList == null || alarmModelList.size() == 0)
@@ -101,7 +108,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         temperatureUpId = spUtils.getInt(TEMPERATURE_UP_KEY, 20);
         temperatureDownId = spUtils.getInt(TEMPERATURE_DOWN_KEY, 4);
         temperatureMeasureId = spUtils.getInt(TEMPERATURE_MEASURE_KEY, 0);
-        alarmModelId = spUtils.getInt(ALARM_MODEL_KEY, 0)%3;
+        alarmModelId = spUtils.getInt(ALARM_MODEL_KEY, 0) % 3;
+        volume = spUtils.getInt(VOLUME_KEY, 0);
 
         handler = new Handler(new Handler.Callback() {
             @Override
@@ -135,6 +143,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         temperatureMeasureTextView = (TextView) view.findViewById(R.id.tv_temperature_unit_of_measure);
         contentLinearLayout = (LinearLayout) view.findViewById(R.id.content_layout);
         remoteSwASwitch = (Switch) view.findViewById(R.id.switch_remote_listen);
+        volumSeekBar = (SeekBar) view.findViewById(R.id.volume_seekBar);
+
+        volumSeekBar.setProgress(volume);
 
         alarmModelWheelView = new WheelView(getContext());
         alarmModelWheelView.setHorizontalPadding(60);
@@ -185,6 +196,23 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         temperatureDownTextView.setOnClickListener(this);
         temperatureUpTextView.setOnClickListener(this);
         temperatureMeasureTextView.setOnClickListener(this);
+        volumSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.e(TAG, "onProgressChanged: ");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.e(TAG, "onStartTrackingTouch: ");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                spUtils.putInt(VOLUME_KEY, seekBar.getProgress());
+                Log.e(TAG, "onStopTrackingTouch: " + seekBar.getProgress());
+            }
+        });
     }
 
     @Override

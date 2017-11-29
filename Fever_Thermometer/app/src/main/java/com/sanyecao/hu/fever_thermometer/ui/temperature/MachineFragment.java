@@ -107,7 +107,6 @@ public class MachineFragment extends Fragment {
         babyImageView = (ImageView) view.findViewById(R.id.iv_baby);
         babyTextView = (TextView) view.findViewById(R.id.tv_baby_name);
         mDatabaseController = DatabaseController.getmInstance();
-
         if (mBabyBean != null)
             babyTextView.setText(mBabyBean.getName());
         else {

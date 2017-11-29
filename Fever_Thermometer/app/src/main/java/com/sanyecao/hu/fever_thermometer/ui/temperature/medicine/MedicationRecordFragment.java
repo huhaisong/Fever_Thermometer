@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,7 +71,7 @@ public class MedicationRecordFragment extends BaseTollBarFragment {
             , "王氏保赤丸", "同仁堂小儿清肺口服液", "神威药业小儿清肺化痰颗粒", "小儿宝泰康", "思密达", "小儿咽扁冲剂"};
 
     public static MedicationRecordFragment getInstance() {
-        return mInstance == null ? mInstance = new MedicationRecordFragment() : mInstance;
+        return mInstance = new MedicationRecordFragment();
     }
 
     @Nullable
@@ -132,12 +133,19 @@ public class MedicationRecordFragment extends BaseTollBarFragment {
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 time = TimeUtils.getTimeString(time, hourOfDay, minute);
                                 timeTextView.setText(time);
-                                timeTextView.setClickable(true);
                             }
                         }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true);
+                        timeDialog.setCanceledOnTouchOutside(false);
                         timeDialog.show();
                     }
                 }, c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
+                dateDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        timeTextView.setClickable(true);
+                    }
+                });
+                dateDialog.setCanceledOnTouchOutside(false);
                 dateDialog.show();
             }
         });
@@ -182,7 +190,6 @@ public class MedicationRecordFragment extends BaseTollBarFragment {
                 }
 
                 protected void dialog(View v) {
-
                     final Dialog dialog = new Dialog(mActivity);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     LinearLayout linearLayout = new LinearLayout(mActivity);
@@ -255,15 +262,25 @@ public class MedicationRecordFragment extends BaseTollBarFragment {
         mActivity.setBarTextViewListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MedicineRecodeBean medicineRecodeBean = new MedicineRecodeBean();
-                medicineRecodeBean.setBabyId(Long.valueOf(mBabyBean.getId()).intValue());
-                medicineRecodeBean.setDate(time);
-                medicineRecodeBean.setMedicines(StringUtils.medicinesHashSetToString(selectedMedicines));
-                DatabaseController.getmInstance().addMedicineRecodeBean(medicineRecodeBean);
-                for (String item : selectedMedicines) {
-                    Log.e(TAG, "onClick: " + item);
-                }
-                showMessageDialog();
+                if (selectedMedicines.size() != 0)
+                    showMessageDialog("操作成功", new InformationDialog.OnEnsureListen() {
+                        @Override
+                        public void onEnsureListen() {
+                            MedicineRecodeBean medicineRecodeBean = new MedicineRecodeBean();
+                            medicineRecodeBean.setBabyId(Long.valueOf(mBabyBean.getId()).intValue());
+                            medicineRecodeBean.setDate(time);
+                            medicineRecodeBean.setMedicines(StringUtils.medicinesHashSetToString(selectedMedicines));
+                            DatabaseController.getmInstance().addMedicineRecodeBean(medicineRecodeBean);
+                            for (String item : selectedMedicines) {
+                                Log.e(TAG, "onClick: " + item);
+                            }
+                            selectedMedicines.clear();
+                            updateCacheMedicineContainView();
+                        }
+                    });
+                else
+                    showMessageDialog("您没有选择任何药物", null);
+
             }
         });
     }
@@ -312,8 +329,10 @@ public class MedicationRecordFragment extends BaseTollBarFragment {
         }
     }
 
-    private void showMessageDialog() {
-        InformationDialog informationDialog = new InformationDialog(getContext(), "操作成功");
+    private void showMessageDialog(String string, InformationDialog.OnEnsureListen onEnsureListen) {
+        InformationDialog informationDialog = new InformationDialog(getContext(), string);
+        informationDialog.setOnEnsureListen(onEnsureListen);
+        informationDialog.setCanceledOnTouchOutside(false);
         informationDialog.show();
     }
 }
